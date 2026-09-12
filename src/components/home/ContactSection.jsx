@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MapPin, Phone, Mail, Send } from 'lucide-react';
+import { MapPin, Phone, Mail, Send, User, MessageSquare, ChevronDown } from 'lucide-react';
 
 const ContactSection = () => {
   const [formData, setFormData] = useState({
@@ -67,58 +67,74 @@ const ContactSection = () => {
           </div>
 
           {/* Contact Form */}
-          <div className="order-1 lg:order-2">
-            <h3 className="text-xl md:text-2xl font-bold text-slate-900 mb-8">Send an Inquiry</h3>
-            <form onSubmit={handleSubmit} className="space-y-8">
-              <div>
+          {/* Contact Form */}
+          <div className="order-1 lg:order-2 bg-white rounded-3xl p-6 md:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-sky-50 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+            
+            <h3 className="text-xl md:text-2xl font-bold text-slate-900 mb-8 relative z-10">Send an Inquiry</h3>
+            <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
+              
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
+                  <User size={18} />
+                </div>
                 <input 
                   type="text" 
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="w-full bg-transparent border-b-2 border-slate-200 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 transition-colors"
-                  placeholder="Your Name"
+                  className="w-full bg-slate-50/50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300"
+                  placeholder="Your Full Name"
                 />
               </div>
               
-              <div>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
+                  <Mail size={18} />
+                </div>
                 <input 
                   type="email" 
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  className="w-full bg-transparent border-b-2 border-slate-200 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 transition-colors"
+                  className="w-full bg-slate-50/50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300"
                   placeholder="Email Address"
                 />
               </div>
 
-              <div>
+              <div className="relative group">
                 <select 
                   value={formData.service}
                   onChange={(e) => setFormData({...formData, service: e.target.value})}
-                  className="w-full bg-transparent border-b-2 border-slate-200 py-3 text-slate-900 focus:outline-none focus:border-sky-500 transition-colors appearance-none cursor-pointer"
+                  className="w-full bg-slate-50/50 border border-slate-200 rounded-2xl py-3.5 pl-5 pr-12 text-slate-700 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300 appearance-none cursor-pointer"
                 >
                   <option value="scooter">Scooter Rental Only</option>
                   <option value="apartment">Apartment Stay Only</option>
                   <option value="both">Both (Ride & Stay)</option>
                   <option value="other">Other Inquiry</option>
                 </select>
+                <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
+                  <ChevronDown size={18} />
+                </div>
               </div>
 
-              <div>
+              <div className="relative group">
+                <div className="absolute top-4 left-4 flex items-start pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
+                  <MessageSquare size={18} />
+                </div>
                 <textarea 
                   required
-                  rows="3"
+                  rows="4"
                   value={formData.message}
                   onChange={(e) => setFormData({...formData, message: e.target.value})}
-                  className="w-full bg-transparent border-b-2 border-slate-200 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 transition-colors resize-none"
-                  placeholder="How can we help you?"
+                  className="w-full bg-slate-50/50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300 resize-none"
+                  placeholder="How can we help you make your stay perfect?"
                 ></textarea>
               </div>
 
               <button 
                 type="submit" 
-                className="w-full sm:w-auto bg-slate-900 hover:bg-sky-500 text-white font-semibold py-4 px-8 rounded-full transition-colors flex items-center justify-center gap-2 mt-4"
+                className="w-full bg-slate-900 hover:bg-sky-500 text-white font-medium py-4 px-8 rounded-2xl transition-all duration-300 flex items-center justify-center gap-2 mt-2 shadow-[0_4px_14px_0_rgb(0,0,0,0.1)] hover:shadow-[0_6px_20px_rgba(14,165,233,0.23)] transform hover:-translate-y-0.5"
               >
                 Send Message <Send size={18} />
               </button>
