@@ -7,7 +7,9 @@ const ReviewCard = ({ review }) => {
   const isBooking = source === 'Booking.com';
   
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow h-full flex flex-col">
+    <div className="bg-transparent p-6 hover:bg-white/60 rounded-3xl transition-colors duration-500 h-full flex flex-col group relative">
+      {/* Decorative Quote Mark */}
+      <div className="absolute top-4 right-6 text-6xl text-slate-200/50 font-serif leading-none opacity-50 pointer-events-none group-hover:text-sky-100 transition-colors">"</div>
       <div className="flex justify-between items-start mb-4">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-xl">

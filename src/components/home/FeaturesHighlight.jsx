@@ -35,16 +35,18 @@ const FeaturesHighlight = () => {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
           {features.map((feature, index) => (
-            <div key={index} className="bg-slate-50 rounded-2xl p-8 border border-slate-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 text-center group">
-              <div className="bg-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm group-hover:scale-110 transition-transform duration-300">
+            <div key={index} className="flex flex-col items-start gap-4 group">
+              <div className="w-12 h-12 flex items-center justify-start text-sky-500 mb-2 group-hover:scale-110 transition-transform duration-300">
                 {feature.icon}
               </div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-3">{feature.title}</h3>
-              <p className="text-slate-600 leading-relaxed">
-                {feature.description}
-              </p>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900 mb-2">{feature.title}</h3>
+                <p className="text-slate-500 leading-relaxed text-sm">
+                  {feature.description}
+                </p>
+              </div>
             </div>
           ))}
         </div>
