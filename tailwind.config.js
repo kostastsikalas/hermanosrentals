@@ -9,15 +9,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        cyan: colors.orange,
-        emerald: colors.blue,
+        cyan: colors.sky,
+        emerald: colors.sky,
         brand: {
           dark: '#0f172a',
           light: '#f8fafc',
-          scooter: colors.orange[500],
-          scooterAccent: colors.orange[600],
-          apartment: colors.blue[500],
-          apartmentAccent: colors.blue[600],
+          scooter: colors.sky[500],
+          scooterAccent: colors.sky[600],
+          apartment: colors.sky[500],
+          apartmentAccent: colors.sky[600],
         }
       },
       fontFamily: {
