@@ -31,9 +31,9 @@ const HeroDualChoice = () => {
         <img 
           src="/logo_white.png" 
           alt="Hermanos Logo" 
-          className="h-24 md:h-40 lg:h-48 w-auto object-contain mb-6 md:mb-8 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] opacity-95 animate-float"
+          className="w-full max-w-[280px] md:max-w-md lg:max-w-lg object-contain mb-8 md:mb-12 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] opacity-95 animate-float"
         />
-        <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-4 md:mb-6 tracking-tight leading-tight drop-shadow-lg">
+        <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-4 md:mb-6 tracking-tight leading-tight drop-shadow-lg">
           Your Complete Island Experience
         </h1>
         <p className="text-base md:text-xl text-slate-300 font-light">
