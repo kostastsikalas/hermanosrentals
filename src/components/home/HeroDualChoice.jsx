@@ -29,9 +29,9 @@ const HeroDualChoice = () => {
 
       <div className="relative z-10 text-center mb-8 md:mb-12 px-4 max-w-4xl mx-auto flex flex-col items-center">
         <img 
-          src="/logo_transparent.png" 
+          src="/logo_white.png" 
           alt="Hermanos Logo" 
-          className="h-24 md:h-40 lg:h-48 w-auto object-contain mb-6 md:mb-8 filter brightness-0 invert drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] opacity-95 animate-float"
+          className="h-24 md:h-40 lg:h-48 w-auto object-contain mb-6 md:mb-8 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] opacity-95 animate-float"
         />
         <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-4 md:mb-6 tracking-tight leading-tight drop-shadow-lg">
           Your Complete Island Experience
