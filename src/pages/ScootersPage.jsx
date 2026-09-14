@@ -21,7 +21,12 @@ const ScootersPage = () => {
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
         </div>
         
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center">
+          <img 
+            src="/logoscooter.JPG" 
+            alt="Hermanos Scooters" 
+            className="w-full max-w-[200px] md:max-w-[280px] object-contain mb-8 shadow-2xl rounded-3xl opacity-95 animate-float border border-white/10"
+          />
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 drop-shadow-md">
             {t('scootersPage.title')}
           </h1>
