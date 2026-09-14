@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight, Bike, Home as HomeIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const HeroDualChoice = () => {
   const [hoveredSide, setHoveredSide] = useState(null); // 'scooter', 'apartment', or null
+  const { t } = useTranslation();
 
   return (
     <section className="relative min-h-screen pt-24 pb-12 flex flex-col justify-center items-center overflow-hidden">
@@ -34,10 +36,10 @@ const HeroDualChoice = () => {
           className="w-full max-w-[280px] md:max-w-md lg:max-w-lg object-contain mb-8 md:mb-12 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] opacity-95 animate-float"
         />
         <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-4 md:mb-6 tracking-tight leading-tight drop-shadow-lg">
-          Your Complete Island Experience
+          {t('hero.title')}
         </h1>
         <p className="text-base md:text-xl text-slate-300 font-light">
-          Ride with freedom. Stay in comfort.
+          {t('hero.subtitle')}
         </p>
       </div>
 
@@ -60,19 +62,19 @@ const HeroDualChoice = () => {
           />
           <div className="relative z-20 h-full min-h-[350px] md:min-h-[450px] p-6 md:p-12 flex flex-col justify-end">
             <div className="bg-cyan-500/20 backdrop-blur-md border border-cyan-500/30 text-cyan-50 w-fit px-3 md:px-4 py-1 md:py-1.5 rounded-full text-xs md:text-sm font-medium mb-4 md:mb-6 flex items-center gap-2">
-              <Bike size={16} /> Explore with Freedom
+              <Bike size={16} /> {t('hero.scooters.tag')}
             </div>
             <h2 className="text-2xl md:text-4xl font-bold text-white mb-2 md:mb-4 group-hover:text-cyan-400 transition-colors">
-              Scooter Rentals
+              {t('hero.scooters.title')}
             </h2>
             <p className="text-sm md:text-base text-slate-300 mb-6 md:mb-8 max-w-sm">
-              Discover hidden beaches and scenic routes with our premium fleet of reliable, well-maintained scooters.
+              {t('hero.scooters.desc')}
             </p>
             <Link 
               to="/scooters" 
               className="inline-flex items-center justify-center w-full sm:w-auto bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold px-6 md:px-8 py-3 md:py-4 rounded-xl transition-all transform group-hover:translate-x-2 text-sm md:text-base"
             >
-              View Scooters & Availability <ChevronRight size={18} className="ml-2" />
+              {t('hero.scooters.btn')} <ChevronRight size={18} className="ml-2" />
             </Link>
           </div>
         </div>
@@ -94,19 +96,19 @@ const HeroDualChoice = () => {
           />
           <div className="relative z-20 h-full min-h-[350px] md:min-h-[450px] p-6 md:p-12 flex flex-col justify-end">
             <div className="bg-emerald-500/20 backdrop-blur-md border border-emerald-500/30 text-emerald-50 w-fit px-3 md:px-4 py-1 md:py-1.5 rounded-full text-xs md:text-sm font-medium mb-4 md:mb-6 flex items-center gap-2">
-              <HomeIcon size={16} /> Stay in Comfort
+              <HomeIcon size={16} /> {t('hero.apartments.tag')}
             </div>
             <h2 className="text-2xl md:text-4xl font-bold text-white mb-2 md:mb-4 group-hover:text-emerald-400 transition-colors">
-              Luxury Apartments
+              {t('hero.apartments.title')}
             </h2>
             <p className="text-sm md:text-base text-slate-300 mb-6 md:mb-8 max-w-sm">
-              Relax in our beautifully designed seafront and central apartments, offering the perfect retreat.
+              {t('hero.apartments.desc')}
             </p>
             <Link 
               to="/apartments" 
               className="inline-flex items-center justify-center w-full sm:w-auto bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-semibold px-6 md:px-8 py-3 md:py-4 rounded-xl transition-all transform group-hover:translate-x-2 text-sm md:text-base"
             >
-              Explore Apartments <ChevronRight size={18} className="ml-2" />
+              {t('hero.apartments.btn')} <ChevronRight size={18} className="ml-2" />
             </Link>
           </div>
         </div>

@@ -1,0 +1,88 @@
+{
+  "nav": {
+    "home": "Home",
+    "scooters": "Rent a Scooter",
+    "apartments": "Apartments",
+    "reviews": "Reviews",
+    "contact": "Contact",
+    "bookNow": "Book Now",
+    "adminLogin": "Admin Login"
+  },
+  "hero": {
+    "title": "Your Complete Island Experience",
+    "subtitle": "Ride with freedom. Stay in comfort.",
+    "scooters": {
+      "tag": "Explore with Freedom",
+      "title": "Scooter Rentals",
+      "desc": "Discover hidden beaches and scenic routes with our premium fleet of reliable, well-maintained scooters.",
+      "btn": "View Scooters & Availability"
+    },
+    "apartments": {
+      "tag": "Stay in Comfort",
+      "title": "Luxury Apartments",
+      "desc": "Relax in our beautifully designed seafront and central apartments, offering the perfect retreat.",
+      "btn": "Explore Apartments"
+    }
+  },
+  "features": {
+    "title": "Why Choose Hermanos",
+    "subtitle": "We combine premium quality with exceptional service to ensure your island holiday is perfect.",
+    "f1_title": "Verified Superhost",
+    "f1_desc": "Recognized for outstanding hospitality across major platforms.",
+    "f2_title": "Best Rates Guaranteed",
+    "f2_desc": "Direct booking means no hidden fees and the best price available.",
+    "f3_title": "24/7 Support",
+    "f3_desc": "Round-the-clock assistance during your entire stay and rental period.",
+    "f4_title": "Seamless Booking",
+    "f4_desc": "Quick, secure, and hassle-free online reservations in minutes."
+  },
+  "contact": {
+    "title": "Get in Touch",
+    "subtitle": "Have a question about a rental or your upcoming stay? We're here to help.",
+    "infoTitle": "Contact Information",
+    "call": "Call / WhatsApp",
+    "email": "Email Us",
+    "location": "Our Location",
+    "address1": "123 Island View Road",
+    "address2": "Paradise Bay, 80100",
+    "formTitle": "Send an Inquiry",
+    "namePlaceholder": "Your Full Name",
+    "emailPlaceholder": "Email Address",
+    "serviceScooter": "Scooter Rental Only",
+    "serviceApartment": "Apartment Stay Only",
+    "serviceBoth": "Both (Ride & Stay)",
+    "serviceOther": "Other Inquiry",
+    "msgPlaceholder": "How can we help you make your stay perfect?",
+    "sendBtn": "Send Message",
+    "alert": "Thank you for your message! We will get back to you shortly."
+  },
+  "reviews": {
+    "title": "What Our Guests Say",
+    "subtitle": "Don't just take our word for it. Read the experiences of our happy customers."
+  },
+  "footer": {
+    "about": "Hermanos provides premium scooter rentals and luxury apartment stays for the ultimate island experience.",
+    "quickLinks": "Quick Links",
+    "services": "Our Services",
+    "scooters": "Scooter Rentals",
+    "apartments": "Holiday Apartments",
+    "airport": "Airport Transfer",
+    "tours": "Guided Tours",
+    "copyright": "Hermanos Rentals. All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  },
+  "pages": {
+    "homeTitle": "Hermanos Rentals | Ride with freedom. Stay in comfort.",
+    "apartmentsTitle": "Apartments | Hermanos Rentals",
+    "scootersTitle": "Scooters | Hermanos Rentals",
+    "comingSoon": "Coming Soon"
+  },
+  "scootersPage": {
+    "title": "Our Scooter Fleet",
+    "subtitle": "Choose from our range of reliable, well-maintained scooters. Perfect for exploring the island.",
+    "bookBtn": "Book Now",
+    "perDay": "/ day",
+    "features": "Included Features:"
+  }
+}

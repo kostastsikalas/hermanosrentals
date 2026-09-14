@@ -1,27 +1,30 @@
 import React from 'react';
 import { ShieldCheck, Clock, CalendarCheck, Award } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const FeaturesHighlight = () => {
+  const { t } = useTranslation();
+  
   const features = [
     {
       icon: <Award className="text-cyan-500" size={32} />,
-      title: "Verified Superhost",
-      description: "Recognized for outstanding hospitality across major platforms."
+      title: t('features.f1_title'),
+      description: t('features.f1_desc')
     },
     {
       icon: <ShieldCheck className="text-emerald-500" size={32} />,
-      title: "Best Rates Guaranteed",
-      description: "Direct booking means no hidden fees and the best price available."
+      title: t('features.f2_title'),
+      description: t('features.f2_desc')
     },
     {
       icon: <Clock className="text-orange-500" size={32} />,
-      title: "24/7 Support",
-      description: "Round-the-clock assistance during your entire stay and rental period."
+      title: t('features.f3_title'),
+      description: t('features.f3_desc')
     },
     {
       icon: <CalendarCheck className="text-purple-500" size={32} />,
-      title: "Seamless Booking",
-      description: "Quick, secure, and hassle-free online reservations in minutes."
+      title: t('features.f4_title'),
+      description: t('features.f4_desc')
     }
   ];
 
@@ -29,9 +32,9 @@ const FeaturesHighlight = () => {
     <section className="py-12 md:py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10 md:mb-16">
-          <h2 className="text-2xl md:text-4xl font-bold text-slate-900 mb-4">Why Choose Hermanos</h2>
+          <h2 className="text-2xl md:text-4xl font-bold text-slate-900 mb-4">{t('features.title')}</h2>
           <p className="text-base md:text-lg text-slate-500 max-w-2xl mx-auto">
-            We combine premium quality with exceptional service to ensure your island holiday is perfect.
+            {t('features.subtitle')}
           </p>
         </div>
         

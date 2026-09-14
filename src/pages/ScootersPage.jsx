@@ -1,16 +1,38 @@
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import ScooterList from '../components/scooters/ScooterList';
 
 const ScootersPage = () => {
+  const { t } = useTranslation();
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   return (
-    <div className="pt-24 pb-12 min-h-screen bg-slate-50 flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold text-slate-900 mb-4">Scooter Rentals</h1>
-        <p className="text-slate-600">Coming soon in Phase 2...</p>
+    <div className="min-h-screen bg-slate-50">
+      {/* Scooters Hero Section */}
+      <div className="relative pt-32 pb-20 bg-slate-900 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?q=80&w=2070&auto=format&fit=crop" 
+            alt="Scooter Background" 
+            className="w-full h-full object-cover opacity-20"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+        </div>
+        
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 drop-shadow-md">
+            {t('scootersPage.title')}
+          </h1>
+          <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto font-light">
+            {t('scootersPage.subtitle')}
+          </p>
+        </div>
       </div>
+
+      {/* Main Content */}
+      <ScooterList />
     </div>
   );
 };

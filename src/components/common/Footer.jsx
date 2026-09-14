@@ -1,8 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter, MapPin, Phone, Mail } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const Footer = () => {
+  const { t } = useTranslation();
   return (
     <footer className="bg-slate-900 text-slate-300 pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -11,7 +13,7 @@ const Footer = () => {
           <div className="col-span-1 md:col-span-1">
             <img src="/logo_transparent.png" alt="Hermanos Logo" className="h-12 w-auto mb-6 brightness-0 invert opacity-95" />
             <p className="text-slate-400 text-sm leading-relaxed mb-6">
-              Your complete island experience. From the freedom of our premium scooter rentals to the comfort of our luxury apartments.
+              {t('footer.about')}
             </p>
             <div className="flex space-x-4">
               <a href="#" className="text-slate-400 hover:text-white transition-colors"><Facebook size={20} /></a>
@@ -22,18 +24,18 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-white font-semibold mb-6">Explore</h4>
+            <h4 className="text-white font-semibold mb-6">{t('footer.quickLinks')}</h4>
             <ul className="space-y-3 text-sm">
-              <li><Link to="/scooters" className="hover:text-cyan-400 transition-colors">Rent a Scooter</Link></li>
-              <li><Link to="/apartments" className="hover:text-emerald-400 transition-colors">Holiday Apartments</Link></li>
-              <li><Link to="/#reviews" className="hover:text-white transition-colors">Guest Reviews</Link></li>
-              <li><Link to="/#contact" className="hover:text-white transition-colors">Contact Us</Link></li>
+              <li><Link to="/scooters" className="hover:text-cyan-400 transition-colors">{t('footer.scooters')}</Link></li>
+              <li><Link to="/apartments" className="hover:text-emerald-400 transition-colors">{t('footer.apartments')}</Link></li>
+              <li><Link to="/#reviews" className="hover:text-white transition-colors">{t('nav.reviews')}</Link></li>
+              <li><Link to="/#contact" className="hover:text-white transition-colors">{t('nav.contact')}</Link></li>
             </ul>
           </div>
 
           {/* Contact Info */}
           <div>
-            <h4 className="text-white font-semibold mb-6">Contact</h4>
+            <h4 className="text-white font-semibold mb-6">{t('nav.contact')}</h4>
             <ul className="space-y-4 text-sm">
               <li className="flex items-start space-x-3">
                 <MapPin size={18} className="text-cyan-500 mt-0.5 flex-shrink-0" />
@@ -69,12 +71,12 @@ const Footer = () => {
 
         <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-slate-500 mb-4 md:mb-0">
-            &copy; {new Date().getFullYear()} Hermanos Dual Rentals. All rights reserved.
+            &copy; {new Date().getFullYear()} {t('footer.copyright')}
           </p>
           <div className="flex space-x-6 text-sm text-slate-500">
-            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
-            <Link to="/admin" className="hover:text-white transition-colors">Admin Login</Link>
+            <a href="#" className="hover:text-white transition-colors">{t('footer.privacy')}</a>
+            <a href="#" className="hover:text-white transition-colors">{t('footer.terms')}</a>
+            <Link to="/admin" className="hover:text-white transition-colors">{t('nav.adminLogin')}</Link>
           </div>
         </div>
       </div>

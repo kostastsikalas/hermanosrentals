@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User } from 'lucide-react';
+import { Menu, X, User, Globe } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const { t, i18n } = useTranslation();
+
+  const toggleLanguage = () => {
+    const newLang = i18n.language.startsWith('el') ? 'en' : 'el';
+    i18n.changeLanguage(newLang);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,11 +23,11 @@ const Navbar = () => {
   }, []);
 
   const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'Rent a Scooter', path: '/scooters' },
-    { name: 'Apartments', path: '/apartments' },
-    { name: 'Reviews', path: '/#reviews' },
-    { name: 'Contact', path: '/#contact' },
+    { name: t('nav.home'), path: '/' },
+    { name: t('nav.scooters'), path: '/scooters' },
+    { name: t('nav.apartments'), path: '/apartments' },
+    { name: t('nav.reviews'), path: '/#reviews' },
+    { name: t('nav.contact'), path: '/#contact' },
   ];
 
   return (
@@ -43,9 +50,17 @@ const Navbar = () => {
             ))}
             
             <button className="bg-cyan-500 hover:bg-cyan-400 text-slate-900 px-5 py-2 rounded-full font-medium transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
-              Book Now
+              {t('nav.bookNow')}
             </button>
             
+            <button 
+              onClick={toggleLanguage} 
+              className="flex items-center gap-1 text-white/80 hover:text-white transition-colors text-sm font-medium"
+            >
+              <Globe size={18} />
+              {i18n.language.startsWith('el') ? 'EL' : 'EN'}
+            </button>
+
             <Link to="/admin" className="text-white/50 hover:text-white transition-colors">
               <User size={20} />
             </Link>
@@ -79,12 +94,22 @@ const Navbar = () => {
             ))}
             <div className="px-3 py-4 mt-2">
               <button className="w-full bg-cyan-500 text-slate-900 px-5 py-3 rounded-full font-bold shadow-md">
-                Book Now
+                {t('nav.bookNow')}
               </button>
             </div>
-            <div className="px-3 py-2 flex justify-center border-t border-white/10 pt-4">
+            <div className="px-3 py-2 flex justify-between border-t border-white/10 pt-4">
+               <button 
+                onClick={() => {
+                  toggleLanguage();
+                  setIsOpen(false);
+                }} 
+                className="text-white/80 hover:text-white flex items-center gap-2"
+              >
+                <Globe size={18} />
+                {i18n.language.startsWith('el') ? 'Ελληνικά (EL)' : 'English (EN)'}
+              </button>
                <Link to="/admin" onClick={() => setIsOpen(false)} className="text-white/50 hover:text-white flex items-center gap-2">
-                <User size={18} /> Admin Login
+                <User size={18} /> {t('nav.adminLogin')}
               </Link>
             </div>
           </div>

@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import ReviewCard from '../common/ReviewCard';
 import { reviews } from '../../data/reviews';
 import { Star } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const ReviewsSection = () => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('all');
 
   const filteredReviews = reviews.filter(review => {
@@ -18,9 +20,9 @@ const ReviewsSection = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="text-center mb-10 md:mb-12">
-          <h2 className="text-2xl md:text-4xl font-bold text-slate-900 mb-4">What Our Guests Say</h2>
+          <h2 className="text-2xl md:text-4xl font-bold text-slate-900 mb-4">{t('reviews.title')}</h2>
           <p className="text-base md:text-lg text-slate-500 max-w-2xl mx-auto mb-8 md:mb-10">
-            Don't just take our word for it. Read verified reviews from our guests across major platforms.
+            {t('reviews.subtitle')}
           </p>
 
           {/* Filter Chips */}
@@ -33,7 +35,7 @@ const ReviewsSection = () => {
                 : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
               }`}
             >
-              All Reviews
+              {t('reviews.allReviews', 'All Reviews')}
             </button>
             <button 
               onClick={() => setActiveTab('booking')}
