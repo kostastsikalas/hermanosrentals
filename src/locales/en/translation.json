@@ -86,5 +86,24 @@
     "features": "Included Features:",
     "available": "Available",
     "onRequest": "On Request"
+  },
+  "termsPage": {
+    "title": "Terms and Conditions",
+    "section1": {
+      "title": "1. General Rental Terms",
+      "content": "The renter must be at least 18 years old and hold a valid driver's license for the respective vehicle category. The vehicle is delivered in excellent condition and must be returned in the same state."
+    },
+    "section2": {
+      "title": "2. Insurance & Damages",
+      "content": "Third-party insurance is included in the rental price. In case of damage caused by the renter, they are responsible for the repair costs."
+    },
+    "section3": {
+      "title": "3. Cancellation Policy",
+      "content": "Cancellations are accepted free of charge up to 48 hours before the scheduled pick-up time. For late cancellations or no-shows, a fee may apply."
+    },
+    "section4": {
+      "title": "4. Vehicle Usage",
+      "content": "Driving off-road or on the beach is strictly prohibited. The vehicle is intended solely for transportation within the island's road network."
+    }
   }
 }
