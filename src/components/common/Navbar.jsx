@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, Globe } from 'lucide-react';
+import { Menu, X, User, Globe, ArrowLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const Navbar = () => {
@@ -29,6 +29,20 @@ const Navbar = () => {
     { name: t('nav.reviews'), path: '/#reviews' },
     { name: t('nav.contact'), path: '/#contact' },
   ];
+
+  if (location.pathname === '/admin') {
+    return (
+      <nav className="fixed w-full z-50 bg-slate-900 py-4 shadow-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+          <div className="text-white font-bold text-xl tracking-tight">Hermanos <span className="text-cyan-400 font-normal">Admin</span></div>
+          <Link to="/" className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors text-sm font-medium">
+            <ArrowLeft size={16} />
+            {i18n.language.startsWith('el') ? 'Επιστροφή' : 'Back to Website'}
+          </Link>
+        </div>
+      </nav>
+    );
+  }
 
   return (
     <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-slate-950/95 backdrop-blur-md shadow-lg py-3' : 'bg-transparent py-5'}`}>

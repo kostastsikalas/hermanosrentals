@@ -1,0 +1,65 @@
+/* Overrides for react-big-calendar to match our Tailwind theme */
+
+.rbc-calendar {
+  font-family: inherit;
+}
+
+.rbc-toolbar button {
+  color: #475569; /* slate-600 */
+  border-radius: 8px;
+  padding: 8px 16px;
+  border-color: #e2e8f0; /* slate-200 */
+  transition: all 0.2s ease-in-out;
+}
+
+.rbc-toolbar button:active,
+.rbc-toolbar button.rbc-active {
+  background-color: #f1f5f9; /* slate-100 */
+  box-shadow: none;
+  color: #0f172a; /* slate-900 */
+  font-weight: 500;
+}
+
+.rbc-toolbar button:hover {
+  background-color: #f8fafc; /* slate-50 */
+}
+
+.rbc-month-view,
+.rbc-time-view,
+.rbc-agenda-view {
+  border-radius: 16px;
+  overflow: hidden;
+  border-color: #f1f5f9; /* slate-100 */
+}
+
+.rbc-header {
+  padding: 12px 0;
+  font-weight: 600;
+  color: #475569;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.rbc-day-bg {
+  border-left: 1px solid #f1f5f9;
+}
+.rbc-day-bg + .rbc-day-bg {
+  border-left: 1px solid #f1f5f9;
+}
+
+.rbc-month-row + .rbc-month-row {
+  border-top: 1px solid #f1f5f9;
+}
+
+.rbc-today {
+  background-color: #f0fdfa; /* teal-50 for a nice highlight */
+}
+
+.rbc-event {
+  padding: 4px 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.rbc-off-range-bg {
+  background-color: #f8fafc; /* slate-50 */
+}

@@ -1,12 +1,21 @@
 import React, { useState } from 'react';
 import ScooterCard from './ScooterCard';
-import { scooters } from '../../data/scooters';
+import { useScooters } from '../../hooks/useScooters';
 import { useTranslation } from 'react-i18next';
-import { Filter } from 'lucide-react';
+import { Filter, Loader2 } from 'lucide-react';
 
 const ScooterList = () => {
   const { t } = useTranslation();
+  const { scooters, loading } = useScooters();
   const [activeCategory, setActiveCategory] = useState('All');
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-32">
+        <Loader2 className="animate-spin text-cyan-500" size={48} />
+      </div>
+    );
+  }
 
   // Derive unique categories from data
   const categories = ['All', ...new Set(scooters.map(s => s.category))];
