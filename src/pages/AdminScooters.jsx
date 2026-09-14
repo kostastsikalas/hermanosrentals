@@ -126,6 +126,7 @@ const AdminDashboard = () => {
                         <th className="px-6 py-4 font-semibold text-sm text-slate-600">Scooter</th>
                         <th className="px-6 py-4 font-semibold text-sm text-slate-600">Category</th>
                         <th className="px-6 py-4 font-semibold text-sm text-slate-600">CC</th>
+                        <th className="px-6 py-4 font-semibold text-sm text-slate-600">Status</th>
                         <th className="px-6 py-4 font-semibold text-sm text-slate-600">Price/Day</th>
                         <th className="px-6 py-4 font-semibold text-sm text-slate-600 text-right">Actions</th>
                       </tr>
@@ -143,6 +144,13 @@ const AdminDashboard = () => {
                             <span className="bg-slate-100 px-3 py-1 rounded-full text-xs font-medium">{scooter.category}</span>
                           </td>
                           <td className="px-6 py-4 text-slate-600">{scooter.cc}cc</td>
+                          <td className="px-6 py-4">
+                            {scooter.status === 'on_request' ? (
+                              <span className="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-xs font-semibold">On Request</span>
+                            ) : (
+                              <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-semibold">Available</span>
+                            )}
+                          </td>
                           <td className="px-6 py-4 text-slate-900 font-medium">€{scooter.price}</td>
                           <td className="px-6 py-4 text-right">
                             <div className="flex items-center justify-end gap-2">
@@ -166,7 +174,7 @@ const AdminDashboard = () => {
                       ))}
                       {scooters.length === 0 && (
                         <tr>
-                          <td colSpan="5" className="px-6 py-12 text-center text-slate-500">
+                          <td colSpan="6" className="px-6 py-12 text-center text-slate-500">
                             No scooters found. Click "Add New Scooter" to get started.
                           </td>
                         </tr>

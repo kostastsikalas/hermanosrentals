@@ -83,6 +83,8 @@
     "subtitle": "Choose from our range of reliable, well-maintained scooters. Perfect for exploring the island.",
     "bookBtn": "Book Now",
     "perDay": "/ day",
-    "features": "Included Features:"
+    "features": "Included Features:",
+    "available": "Available",
+    "onRequest": "On Request"
   }
 }

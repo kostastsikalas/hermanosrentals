@@ -17,9 +17,20 @@ const ScooterCard = ({ scooter }) => {
         <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full font-bold text-slate-900 shadow-sm border border-white/20">
           €{scooter.price}<span className="text-sm font-medium text-slate-500">{t('scootersPage.perDay')}</span>
         </div>
-        <div className="absolute top-4 left-4 bg-cyan-500 text-slate-900 px-3 py-1 rounded-full text-xs font-bold shadow-sm flex items-center gap-1.5">
-          <Bike size={14} />
-          {scooter.category}
+        <div className="absolute top-4 left-4 flex flex-col gap-2">
+          <div className="bg-cyan-500 text-slate-900 px-3 py-1 rounded-full text-xs font-bold shadow-sm flex items-center gap-1.5 w-max">
+            <Bike size={14} />
+            {scooter.category}
+          </div>
+          {scooter.status === 'on_request' ? (
+             <div className="bg-amber-500 text-slate-900 px-3 py-1 rounded-full text-xs font-bold shadow-sm flex items-center gap-1.5 w-max">
+               {t('scootersPage.onRequest')}
+             </div>
+          ) : (
+             <div className="bg-emerald-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-sm flex items-center gap-1.5 w-max">
+               {t('scootersPage.available')}
+             </div>
+          )}
         </div>
       </div>
 

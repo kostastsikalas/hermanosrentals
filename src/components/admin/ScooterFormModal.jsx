@@ -8,6 +8,7 @@ const ScooterFormModal = ({ isOpen, onClose, onSave, onUploadImage, scooter = nu
     cc: '',
     price: '',
     image: '',
+    status: 'available', // available or on_request
     features: ''
   });
   const [isUploading, setIsUploading] = useState(false);
@@ -21,6 +22,7 @@ const ScooterFormModal = ({ isOpen, onClose, onSave, onUploadImage, scooter = nu
         cc: scooter.cc || '',
         price: scooter.price || '',
         image: scooter.image || '',
+        status: scooter.status || 'available',
         features: Array.isArray(scooter.features) ? scooter.features.join(', ') : ''
       });
     } else {
@@ -30,6 +32,7 @@ const ScooterFormModal = ({ isOpen, onClose, onSave, onUploadImage, scooter = nu
         cc: '',
         price: '',
         image: '',
+        status: 'available',
         features: ''
       });
     }
@@ -88,6 +91,7 @@ const ScooterFormModal = ({ isOpen, onClose, onSave, onUploadImage, scooter = nu
       cc: parseInt(formData.cc, 10),
       price: parseFloat(formData.price),
       image: formData.image,
+      status: formData.status,
       features: processedFeatures
     };
 
@@ -210,6 +214,19 @@ const ScooterFormModal = ({ isOpen, onClose, onSave, onUploadImage, scooter = nu
                   className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-slate-50 focus:bg-white transition-colors"
                   placeholder="e.g. 25.00"
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Availability</label>
+                <select 
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-slate-50 focus:bg-white transition-colors"
+                >
+                  <option value="available">Available</option>
+                  <option value="on_request">On Request</option>
+                </select>
               </div>
             </div>
 
