@@ -25,7 +25,7 @@ const ScootersPage = () => {
           <img 
             src="/logoscooter.JPG" 
             alt="Hermanos Scooters" 
-            className="w-full max-w-[200px] md:max-w-[280px] object-contain mb-8 shadow-2xl rounded-3xl opacity-95 animate-float border border-white/10"
+            className="w-full max-w-[200px] md:max-w-[280px] object-contain mb-8 animate-float mix-blend-screen invert opacity-90"
           />
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 drop-shadow-md">
             {t('scootersPage.title')}
