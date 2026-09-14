@@ -5,7 +5,8 @@ import Footer from './components/common/Footer';
 import Home from './pages/Home';
 import ScootersPage from './pages/ScootersPage';
 import ApartmentsPage from './pages/ApartmentsPage';
-import AdminScooters from './pages/AdminScooters';
+import AdminDashboard from './pages/AdminScooters';
+import TermsPage from './pages/TermsPage';
 
 function App() {
   return (
@@ -17,7 +18,8 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/scooters" element={<ScootersPage />} />
             <Route path="/apartments" element={<ApartmentsPage />} />
-            <Route path="/admin" element={<AdminScooters />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/admin" element={<AdminDashboard />} />
           </Routes>
         </main>
         <Footer />

@@ -75,7 +75,7 @@ const Footer = () => {
           </p>
           <div className="flex space-x-6 text-sm text-slate-500">
             <a href="#" className="hover:text-white transition-colors">{t('footer.privacy')}</a>
-            <a href="#" className="hover:text-white transition-colors">{t('footer.terms')}</a>
+            <Link to="/terms" className="hover:text-white transition-colors">{t('footer.terms')}</Link>
             <Link to="/admin" className="hover:text-white transition-colors">{t('nav.adminLogin')}</Link>
           </div>
         </div>
