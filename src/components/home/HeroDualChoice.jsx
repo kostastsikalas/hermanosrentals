@@ -57,7 +57,7 @@ const HeroDualChoice = () => {
         >
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent z-10" />
           <img 
-            src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?q=80&w=2070&auto=format&fit=crop" 
+            src="/productscooter.jpg" 
             alt="Scooter Rentals" 
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           />

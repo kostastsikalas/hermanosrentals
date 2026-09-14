@@ -14,7 +14,7 @@ const ScootersPage = () => {
       <div className="relative pt-32 pb-20 bg-slate-900 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img 
-            src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?q=80&w=2070&auto=format&fit=crop" 
+            src="/productscooter.jpg" 
             alt="Scooter Background" 
             className="w-full h-full object-cover opacity-20"
           />
