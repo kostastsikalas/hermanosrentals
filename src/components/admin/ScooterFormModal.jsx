@@ -9,7 +9,8 @@ const ScooterFormModal = ({ isOpen, onClose, onSave, onUploadImage, scooter = nu
     price: '',
     image: '',
     status: 'available', // available or on_request
-    features: ''
+    features_en: '',
+    features_el: ''
   });
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
@@ -23,7 +24,8 @@ const ScooterFormModal = ({ isOpen, onClose, onSave, onUploadImage, scooter = nu
         price: scooter.price || '',
         image: scooter.image || '',
         status: scooter.status || 'available',
-        features: Array.isArray(scooter.features) ? scooter.features.join(', ') : ''
+        features_en: Array.isArray(scooter.features_en) ? scooter.features_en.join(', ') : '',
+        features_el: Array.isArray(scooter.features_el) ? scooter.features_el.join(', ') : ''
       });
     } else {
       setFormData({
@@ -33,7 +35,8 @@ const ScooterFormModal = ({ isOpen, onClose, onSave, onUploadImage, scooter = nu
         price: '',
         image: '',
         status: 'available',
-        features: ''
+        features_en: '',
+        features_el: ''
       });
     }
     setUploadError('');
@@ -80,7 +83,12 @@ const ScooterFormModal = ({ isOpen, onClose, onSave, onUploadImage, scooter = nu
       return;
     }
 
-    const processedFeatures = formData.features
+    const processedFeaturesEn = formData.features_en
+      .split(',')
+      .map(f => f.trim())
+      .filter(f => f.length > 0);
+
+    const processedFeaturesEl = formData.features_el
       .split(',')
       .map(f => f.trim())
       .filter(f => f.length > 0);
@@ -92,7 +100,8 @@ const ScooterFormModal = ({ isOpen, onClose, onSave, onUploadImage, scooter = nu
       price: parseFloat(formData.price),
       image: formData.image,
       status: formData.status,
-      features: processedFeatures
+      features_en: processedFeaturesEn,
+      features_el: processedFeaturesEl
     };
 
     onSave(scooterData);
@@ -230,17 +239,32 @@ const ScooterFormModal = ({ isOpen, onClose, onSave, onUploadImage, scooter = nu
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Features (Comma Separated)</label>
-              <textarea 
-                name="features"
-                required
-                value={formData.features}
-                onChange={handleChange}
-                rows="3"
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-slate-50 focus:bg-white transition-colors resize-none"
-                placeholder="2 Helmets included, Top Case, Unlimited Mileage"
-              ></textarea>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Features (English) - Comma Separated</label>
+                <textarea 
+                  name="features_en"
+                  required
+                  value={formData.features_en}
+                  onChange={handleChange}
+                  rows="3"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-slate-50 focus:bg-white transition-colors resize-none"
+                  placeholder="2 Helmets included, Top Case, Unlimited Mileage"
+                ></textarea>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Χαρακτηριστικά (Ελληνικά) - Με κόμμα</label>
+                <textarea 
+                  name="features_el"
+                  required
+                  value={formData.features_el}
+                  onChange={handleChange}
+                  rows="3"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-slate-50 focus:bg-white transition-colors resize-none"
+                  placeholder="2 Κράνη, Μπαγκαζιέρα, Απεριόριστα Χιλιόμετρα"
+                ></textarea>
+              </div>
             </div>
 
             <div className="pt-4 flex justify-end gap-3">

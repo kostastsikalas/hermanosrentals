@@ -3,7 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { Bike, CheckCircle2 } from 'lucide-react';
 
 const ScooterCard = ({ scooter }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  const currentFeatures = i18n.language.startsWith('el') 
+    ? (scooter.features_el || scooter.features || [])
+    : (scooter.features_en || scooter.features || []);
 
   return (
     <div className="bg-white rounded-3xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 hover:shadow-xl transition-all duration-300 flex flex-col h-full group">
@@ -41,7 +45,7 @@ const ScooterCard = ({ scooter }) => {
         <div className="mb-6 flex-grow">
           <p className="text-sm font-semibold text-slate-900 mb-3 uppercase tracking-wider">{t('scootersPage.features')}</p>
           <ul className="space-y-2">
-            {scooter.features.map((feature, idx) => (
+            {currentFeatures.map((feature, idx) => (
               <li key={idx} className="flex items-start text-sm text-slate-600">
                 <CheckCircle2 size={16} className="text-emerald-500 mr-2 mt-0.5 flex-shrink-0" />
                 {feature}
