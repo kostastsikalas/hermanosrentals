@@ -46,8 +46,9 @@ const HeroDualChoice = () => {
       <div className="relative z-10 w-full max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
         
         {/* Scooter Card */}
-        <div 
-          className={`relative group rounded-3xl overflow-hidden transition-all duration-500 ease-out transform ${
+        <Link 
+          to="/scooters"
+          className={`block relative group rounded-3xl overflow-hidden transition-all duration-500 ease-out transform cursor-pointer ${
             hoveredSide === 'scooter' ? 'scale-[1.02] z-20 shadow-2xl shadow-cyan-500/20' : 
             hoveredSide === 'apartment' ? 'scale-95 opacity-50 blur-[1px]' : 'hover:scale-[1.02]'
           }`}
@@ -70,18 +71,18 @@ const HeroDualChoice = () => {
             <p className="text-sm md:text-base text-slate-300 mb-6 md:mb-8 max-w-sm">
               {t('hero.scooters.desc')}
             </p>
-            <Link 
-              to="/scooters" 
-              className="inline-flex items-center justify-center w-full sm:w-auto bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold px-6 md:px-8 py-3 md:py-4 rounded-xl transition-all transform group-hover:translate-x-2 text-sm md:text-base"
+            <span 
+              className="inline-flex items-center justify-center w-full sm:w-auto bg-cyan-500 group-hover:bg-cyan-400 text-slate-900 font-semibold px-6 md:px-8 py-3 md:py-4 rounded-xl transition-all transform group-hover:translate-x-2 text-sm md:text-base"
             >
               {t('hero.scooters.btn')} <ChevronRight size={18} className="ml-2" />
-            </Link>
+            </span>
           </div>
-        </div>
+        </Link>
 
         {/* Apartment Card */}
-        <div 
-          className={`relative group rounded-3xl overflow-hidden transition-all duration-500 ease-out transform ${
+        <Link 
+          to="/apartments"
+          className={`block relative group rounded-3xl overflow-hidden transition-all duration-500 ease-out transform cursor-pointer ${
             hoveredSide === 'apartment' ? 'scale-[1.02] z-20 shadow-2xl shadow-emerald-500/20' : 
             hoveredSide === 'scooter' ? 'scale-95 opacity-50 blur-[1px]' : 'hover:scale-[1.02]'
           }`}
@@ -104,14 +105,13 @@ const HeroDualChoice = () => {
             <p className="text-sm md:text-base text-slate-300 mb-6 md:mb-8 max-w-sm">
               {t('hero.apartments.desc')}
             </p>
-            <Link 
-              to="/apartments" 
-              className="inline-flex items-center justify-center w-full sm:w-auto bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-semibold px-6 md:px-8 py-3 md:py-4 rounded-xl transition-all transform group-hover:translate-x-2 text-sm md:text-base"
+            <span 
+              className="inline-flex items-center justify-center w-full sm:w-auto bg-emerald-500 group-hover:bg-emerald-400 text-slate-900 font-semibold px-6 md:px-8 py-3 md:py-4 rounded-xl transition-all transform group-hover:translate-x-2 text-sm md:text-base"
             >
               {t('hero.apartments.btn')} <ChevronRight size={18} className="ml-2" />
-            </Link>
+            </span>
           </div>
-        </div>
+        </Link>
 
       </div>
     </section>
