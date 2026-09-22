@@ -323,8 +323,8 @@ const BookingPage = () => {
                         className={`cursor-pointer rounded-2xl overflow-hidden border-2 transition-all relative group ${isSelected ? 'border-cyan-500 shadow-md ring-4 ring-cyan-500/10' : 'border-slate-200 hover:border-cyan-300 hover:shadow-sm'}`}
                       >
                         <div className="aspect-[4/3] bg-slate-100 overflow-hidden">
-                          {apt.images && apt.images.length > 0 ? (
-                            <img src={apt.images[0]} alt={title} className={`w-full h-full object-cover transition-transform duration-500 ${isSelected ? 'scale-105' : 'group-hover:scale-105'}`} />
+                          {apt?.images && apt?.images.length > 0 ? (
+                            <img src={apt?.images[0]} alt={title} className={`w-full h-full object-cover transition-transform duration-500 ${isSelected ? 'scale-105' : 'group-hover:scale-105'}`} />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-slate-300"><HomeIcon size={32} /></div>
                           )}

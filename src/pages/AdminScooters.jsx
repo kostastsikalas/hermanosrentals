@@ -263,8 +263,8 @@ const AdminDashboard = () => {
                         <tr key={apartment.id} className="hover:bg-slate-50/50 transition-colors">
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-4">
-                              {apartment.images && apartment.images.length > 0 ? (
-                                <img src={apartment.images[0]} alt={apartment.title_en} className="w-16 h-12 object-cover rounded-lg" />
+                              {apartment?.images && apartment?.images.length > 0 ? (
+                                <img src={apartment?.images[0]} alt={apartment.title_en} className="w-16 h-12 object-cover rounded-lg" />
                               ) : (
                                 <div className="w-16 h-12 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400">
                                   <Building2 size={24} />

@@ -30,10 +30,10 @@ const ApartmentFormModal = ({ isOpen, onClose, onSave, onUploadImages, apartment
         status: apartment.status || 'available',
         amenities_en: apartment.amenities_en?.length ? apartment.amenities_en : [''],
         amenities_el: apartment.amenities_el?.length ? apartment.amenities_el : [''],
-        images: apartment.images || [],
+        images: apartment?.images || [],
         price: apartment.price || ''
       });
-      setImagePreviews(apartment.images || []);
+      setImagePreviews(apartment?.images || []);
     } else {
       setFormData({
         title_en: '',
@@ -66,8 +66,9 @@ const ApartmentFormModal = ({ isOpen, onClose, onSave, onUploadImages, apartment
 
   const removeImage = (index) => {
     // If it's an existing image (from DB)
-    if (index < formData.images.length) {
-      const newImagesList = [...formData.images];
+    const currentImages = formData?.images || [];
+    if (index < currentImages.length) {
+      const newImagesList = [...currentImages];
       newImagesList.splice(index, 1);
       setFormData(prev => ({ ...prev, images: newImagesList }));
       
@@ -76,7 +77,7 @@ const ApartmentFormModal = ({ isOpen, onClose, onSave, onUploadImages, apartment
       setImagePreviews(newPreviews);
     } else {
       // If it's a newly added image (not yet uploaded)
-      const newImageIndex = index - formData.images.length;
+      const newImageIndex = index - currentImages.length;
       
       const updatedNewImages = [...newImages];
       updatedNewImages.splice(newImageIndex, 1);
@@ -116,7 +117,7 @@ const ApartmentFormModal = ({ isOpen, onClose, onSave, onUploadImages, apartment
     setIsSubmitting(true);
 
     try {
-      let finalImages = [...formData.images];
+      let finalImages = [...(formData?.images || [])];
 
       // Upload new images if any
       if (newImages.length > 0) {

@@ -15,12 +15,12 @@ const ApartmentCard = ({ apartment }) => {
 
   const nextImage = (e) => {
     e.stopPropagation();
-    setCurrentImageIdx((prev) => (prev + 1) % apartment.images.length);
+    setCurrentImageIdx((prev) => (prev + 1) % apartment?.images.length);
   };
 
   const prevImage = (e) => {
     e.stopPropagation();
-    setCurrentImageIdx((prev) => (prev === 0 ? apartment.images.length - 1 : prev - 1));
+    setCurrentImageIdx((prev) => (prev === 0 ? apartment?.images.length - 1 : prev - 1));
   };
 
   const handleBookNow = () => {
@@ -31,9 +31,9 @@ const ApartmentCard = ({ apartment }) => {
     <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl transition-all duration-300 group flex flex-col h-full">
       {/* Image Carousel */}
       <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
-        {apartment.images && apartment.images.length > 0 ? (
+        {apartment?.images && apartment?.images.length > 0 ? (
           <img
-            src={apartment.images[currentImageIdx]}
+            src={apartment?.images[currentImageIdx]}
             alt={title}
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
@@ -44,7 +44,7 @@ const ApartmentCard = ({ apartment }) => {
         )}
         
         {/* Carousel Controls */}
-        {apartment.images && apartment.images.length > 1 && (
+        {apartment?.images && apartment?.images.length > 1 && (
           <>
             <button 
               onClick={prevImage}
@@ -63,7 +63,7 @@ const ApartmentCard = ({ apartment }) => {
             
             {/* Image Counter */}
             <div className="absolute bottom-3 right-3 bg-black/50 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm">
-              {currentImageIdx + 1} / {apartment.images.length}
+              {currentImageIdx + 1} / {apartment?.images.length}
             </div>
           </>
         )}
