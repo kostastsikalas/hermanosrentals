@@ -35,7 +35,7 @@ const BookingPage = () => {
   };
 
   return (
-    <div className="py-12 md:py-20 bg-slate-50 min-h-screen">
+    <div className="pt-28 pb-12 md:pb-20 bg-slate-50 min-h-screen">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="text-center mb-10 md:mb-16">

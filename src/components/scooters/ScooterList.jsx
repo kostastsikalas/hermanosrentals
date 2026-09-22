@@ -32,7 +32,7 @@ const ScooterList = () => {
       <div className="mb-10 md:mb-12 flex flex-col md:flex-row items-center justify-between gap-6 bg-white p-4 md:p-6 rounded-3xl shadow-sm border border-slate-100">
         <div className="flex items-center gap-3 text-slate-700 font-medium">
           <Filter size={20} className="text-cyan-500" />
-          <span>Category Filter:</span>
+          <span>{t('scootersPage.filterLabel', 'Category Filter:')}</span>
         </div>
         <div className="flex flex-wrap justify-center gap-3">
           {categories.map(category => (
@@ -60,7 +60,7 @@ const ScooterList = () => {
       
       {filteredScooters.length === 0 && (
         <div className="text-center py-20">
-          <p className="text-slate-500 text-lg">No scooters found in this category.</p>
+          <p className="text-slate-500 text-lg">{t('scootersPage.noResults', 'No scooters found in this category.')}</p>
         </div>
       )}
     </div>

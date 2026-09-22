@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, User, Globe, ArrowLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -7,6 +7,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { t, i18n } = useTranslation();
 
   const toggleLanguage = () => {
@@ -63,9 +64,9 @@ const Navbar = () => {
               </Link>
             ))}
             
-            <button className="bg-cyan-500 hover:bg-cyan-400 text-slate-900 px-5 py-2 rounded-full font-medium transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+            <Link to="/book" className="bg-cyan-500 hover:bg-cyan-400 text-slate-900 px-5 py-2 rounded-full font-medium transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
               {t('nav.bookNow')}
-            </button>
+            </Link>
             
             <button 
               onClick={toggleLanguage} 
@@ -107,9 +108,9 @@ const Navbar = () => {
               </Link>
             ))}
             <div className="px-3 py-4 mt-2">
-              <button className="w-full bg-cyan-500 text-slate-900 px-5 py-3 rounded-full font-bold shadow-md">
+              <Link to="/book" onClick={() => setIsOpen(false)} className="block w-full bg-cyan-500 text-slate-900 px-5 py-3 rounded-full font-bold shadow-md text-center">
                 {t('nav.bookNow')}
-              </button>
+              </Link>
             </div>
             <div className="px-3 py-2 flex justify-between border-t border-white/10 pt-4">
                <button 

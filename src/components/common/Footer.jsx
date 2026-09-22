@@ -54,16 +54,16 @@ const Footer = () => {
           
           {/* Newsletter / CTA */}
           <div>
-             <h4 className="text-white font-semibold mb-6">Stay Updated</h4>
-             <p className="text-sm text-slate-400 mb-4">Subscribe for seasonal offers and island guides.</p>
+             <h4 className="text-white font-semibold mb-6">{t('footer.stayUpdated')}</h4>
+             <p className="text-sm text-slate-400 mb-4">{t('footer.newsletterDesc')}</p>
              <form className="flex" onSubmit={(e) => e.preventDefault()}>
                 <input 
                   type="email" 
-                  placeholder="Your email" 
+                  placeholder={t('footer.emailPlaceholder')}
                   className="bg-slate-800 text-white px-4 py-2 rounded-l-md w-full focus:outline-none focus:ring-1 focus:ring-cyan-500 text-sm"
                 />
                 <button type="submit" className="bg-cyan-600 hover:bg-cyan-500 px-4 py-2 rounded-r-md text-white transition-colors text-sm font-medium">
-                  Join
+                  {t('footer.joinBtn')}
                 </button>
              </form>
           </div>

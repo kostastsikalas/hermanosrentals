@@ -70,7 +70,11 @@
     "tours": "Guided Tours",
     "copyright": "Hermanos Rentals. All rights reserved.",
     "privacy": "Privacy Policy",
-    "terms": "Terms of Service"
+    "terms": "Terms of Service",
+    "stayUpdated": "Stay Updated",
+    "newsletterDesc": "Subscribe for seasonal offers and island guides.",
+    "emailPlaceholder": "Your email",
+    "joinBtn": "Join"
   },
   "pages": {
     "homeTitle": "Hermanos Rentals | Ride with freedom. Stay in comfort.",
@@ -85,7 +89,9 @@
     "perDay": "/ day",
     "features": "Included Features:",
     "available": "Available",
-    "onRequest": "On Request"
+    "onRequest": "On Request",
+    "filterLabel": "Category Filter:",
+    "noResults": "No scooters found in this category."
   },
   "termsPage": {
     "title": "Terms and Conditions",

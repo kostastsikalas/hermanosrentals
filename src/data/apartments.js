@@ -91,7 +91,8 @@ export const apartments = [
     floorKey: 'apartmentsData.minosDeluxe.floor',
     capacity: 2,
     amenitiesKeys: [
-      'apartmentsData.minosDeluxe.amenities.0'
+      'apartmentsData.minosDeluxe.amenities.0',
+      'apartmentsData.minosDeluxe.amenities.1'
     ],
     images: [
       "/apartments/minos-deluxe/image00002.jpeg",

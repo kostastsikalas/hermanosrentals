@@ -19,7 +19,7 @@ const ApartmentCard = ({ apartment }) => {
   };
 
   const handleBookNow = () => {
-    navigate('/#contact', { state: { service: 'apartment', title: t(apartment.titleKey) } });
+    navigate('/book', { state: { vehicleName: t(apartment.titleKey) } });
   };
 
   return (
