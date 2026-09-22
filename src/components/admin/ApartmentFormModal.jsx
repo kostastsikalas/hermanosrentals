@@ -148,8 +148,8 @@ const ApartmentFormModal = ({ isOpen, onClose, onSave, onUploadImages, apartment
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
-      <div className="bg-white rounded-3xl w-full max-w-4xl shadow-2xl relative my-8">
+    <div className="fixed inset-0 z-50 flex items-start justify-center p-4 md:p-8 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
+      <div className="bg-white rounded-3xl w-full max-w-4xl shadow-2xl relative my-8 mx-auto shrink-0">
         
         <div className="sticky top-0 bg-white z-10 px-8 py-6 border-b border-slate-100 rounded-t-3xl flex items-center justify-between">
           <h2 className="text-2xl font-bold text-slate-900">
