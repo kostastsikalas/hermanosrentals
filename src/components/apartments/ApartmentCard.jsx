@@ -43,6 +43,13 @@ const ApartmentCard = ({ apartment }) => {
           </div>
         )}
         
+        {/* Price Overlay */}
+        {apartment?.price && (
+          <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full font-bold text-slate-900 shadow-sm border border-white/20">
+            €{apartment.price}<span className="text-sm font-medium text-slate-500">/{t('scootersPage.perDay')}</span>
+          </div>
+        )}
+        
         {/* Carousel Controls */}
         {apartment?.images && apartment?.images.length > 1 && (
           <>
