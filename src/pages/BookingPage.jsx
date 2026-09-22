@@ -13,6 +13,7 @@ const BookingPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [checkingAvailability, setCheckingAvailability] = useState(false);
   const [isAvailable, setIsAvailable] = useState(true);
+  const [isSuccess, setIsSuccess] = useState(false);
   
   const { scooters } = useScooters();
   const { apartments } = useApartments();
@@ -156,8 +157,7 @@ const BookingPage = () => {
 
       if (error) throw error;
       
-      alert(t('bookingPage.alert', 'Your booking request has been sent successfully! We will contact you soon.'));
-      navigate('/');
+      setIsSuccess(true);
     } catch (error) {
       console.error('Error submitting booking:', error);
       alert('There was an error submitting your request. Please try again.');
@@ -165,6 +165,26 @@ const BookingPage = () => {
       setIsSubmitting(false);
     }
   };
+
+  if (isSuccess) {
+    return (
+      <div className="pt-28 pb-12 md:pb-20 bg-slate-50 min-h-screen flex items-center justify-center">
+        <div className="text-center p-8 bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 max-w-md w-full mx-4">
+          <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <CheckCircle className="text-emerald-500 w-10 h-10" />
+          </div>
+          <h2 className="text-2xl font-bold text-slate-900 mb-4">{t('bookingPage.successTitle', 'Booking Request Sent!')}</h2>
+          <p className="text-slate-600 mb-8">{t('bookingPage.successMessage', 'Thank you! We have received your request and will contact you shortly to confirm.')}</p>
+          <button 
+            onClick={() => navigate('/')}
+            className="w-full bg-slate-900 text-white py-4 rounded-xl font-medium hover:bg-slate-800 transition-colors"
+          >
+            {t('bookingPage.backHome', 'Return to Home')}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-28 pb-12 md:pb-20 bg-slate-50 min-h-screen">
