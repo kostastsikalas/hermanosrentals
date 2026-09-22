@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { MapPin, Phone, Mail, Send, User, MessageSquare, ChevronDown } from 'lucide-react';
+import { MapPin, Phone, Mail, Send, User, MessageSquare, ChevronDown, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { supabase } from '../../lib/supabase';
 
 const ContactSection = () => {
   const { t } = useTranslation();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -11,11 +13,30 @@ const ContactSection = () => {
     message: ''
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Placeholder for actual form submission
-    alert(t('contact.alert'));
-    setFormData({ name: '', email: '', service: 'both', message: '' });
+    setIsSubmitting(true);
+    
+    try {
+      const { error } = await supabase
+        .from('contact_messages')
+        .insert([{
+          name: formData.name,
+          email: formData.email,
+          service: formData.service,
+          message: formData.message
+        }]);
+
+      if (error) throw error;
+      
+      alert(t('contact.alert', 'Your message has been sent successfully! We will get back to you soon.'));
+      setFormData({ name: '', email: '', service: 'both', message: '' });
+    } catch (error) {
+      console.error('Error submitting contact message:', error);
+      alert('There was an error sending your message. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -68,7 +89,6 @@ const ContactSection = () => {
             </div>
           </div>
 
-          {/* Contact Form */}
           {/* Contact Form */}
           <div className="order-1 lg:order-2 bg-white rounded-3xl p-6 md:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-50 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-40 h-40 bg-sky-50 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
@@ -136,9 +156,16 @@ const ContactSection = () => {
 
               <button 
                 type="submit" 
-                className="w-full bg-slate-900 hover:bg-sky-500 text-white font-medium py-4 px-8 rounded-2xl transition-all duration-300 flex items-center justify-center gap-2 mt-2 shadow-[0_4px_14px_0_rgb(0,0,0,0.1)] hover:shadow-[0_6px_20px_rgba(14,165,233,0.23)] transform hover:-translate-y-0.5"
+                disabled={isSubmitting}
+                className="w-full bg-slate-900 hover:bg-sky-500 text-white disabled:bg-slate-400 disabled:cursor-not-allowed font-medium py-4 px-8 rounded-2xl transition-all duration-300 flex items-center justify-center gap-2 mt-2 shadow-[0_4px_14px_0_rgb(0,0,0,0.1)] hover:shadow-[0_6px_20px_rgba(14,165,233,0.23)] transform hover:-translate-y-0.5"
               >
-                {t('contact.sendBtn')} <Send size={18} />
+                {isSubmitting ? (
+                  <Loader2 className="animate-spin" size={20} />
+                ) : (
+                  <>
+                    {t('contact.sendBtn')} <Send size={18} />
+                  </>
+                )}
               </button>
             </form>
           </div>

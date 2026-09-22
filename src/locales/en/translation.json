@@ -122,10 +122,16 @@
     "phone": "Phone Number",
     "startDate": "Start Date",
     "endDate": "End Date",
-    "vehicle": "Selected Vehicle",
-    "notes": "Additional Notes",
-    "submitBtn": "Confirm Booking",
-    "alert": "Your booking request has been sent! We will confirm it shortly."
+    "vehicle": "Selected Vehicle / Apartment",
+    "notes": "Additional Notes or Special Requests",
+    "submitBtn": "Request Booking",
+    "alert": "Your booking request has been sent successfully! We will contact you soon.",
+    "serviceTypeLabel": "What would you like to book?",
+    "serviceScooter": "Scooter",
+    "serviceApartment": "Apartment",
+    "selectItemLabel": "Select Option",
+    "selectItemPlaceholder": "-- Select from list --",
+    "notAvailable": "Sorry, the selected dates are already booked for this option."
   },
   "apartmentsPage": {
     "title": "Our Luxury Apartments",
