@@ -47,8 +47,10 @@ export function useScooters() {
         .select();
 
       if (error) throw error;
-      if (data) {
+      if (data && data.length > 0) {
         setScooters(prev => [...prev, data[0]]);
+      } else {
+        fetchScooters();
       }
       return { success: true };
     } catch (err) {
@@ -66,8 +68,10 @@ export function useScooters() {
         .select();
 
       if (error) throw error;
-      if (data) {
-        setScooters(prev => prev.map(s => (s.id === id ? data[0] : s)));
+      if (data && data.length > 0) {
+        setScooters(prev => prev.map(s => (s?.id === id ? data[0] : s)));
+      } else {
+        fetchScooters();
       }
       return { success: true };
     } catch (err) {

@@ -63,8 +63,11 @@ export function useApartments() {
         .select();
 
       if (error) throw error;
-      if (data) {
+      if (data && data.length > 0) {
         setApartments(prev => [...prev, data[0]]);
+      } else {
+        // Fallback: re-fetch all if RLS blocked the select
+        fetchApartments();
       }
       return { success: true };
     } catch (err) {
@@ -82,8 +85,10 @@ export function useApartments() {
         .select();
 
       if (error) throw error;
-      if (data) {
-        setApartments(prev => prev.map(a => (a.id === id ? data[0] : a)));
+      if (data && data.length > 0) {
+        setApartments(prev => prev.map(a => (a?.id === id ? data[0] : a)));
+      } else {
+        fetchApartments();
       }
       return { success: true };
     } catch (err) {
