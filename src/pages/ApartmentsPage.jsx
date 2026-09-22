@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { apartments } from '../data/apartments';
+import { useApartments } from '../hooks/useApartments';
 import ApartmentCard from '../components/apartments/ApartmentCard';
+import { Loader2 } from 'lucide-react';
 
 const ApartmentsPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { apartments, loading } = useApartments();
   
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -42,11 +44,17 @@ const ApartmentsPage = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 
         {/* Grid Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-          {apartments.map((apartment) => (
-            <ApartmentCard key={apartment.id} apartment={apartment} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="flex justify-center items-center py-20">
+            <Loader2 className="animate-spin text-cyan-500" size={48} />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+            {apartments.filter(apt => apt.status !== 'hidden').map((apartment) => (
+              <ApartmentCard key={apartment.id} apartment={apartment} />
+            ))}
+          </div>
+        )}
 
       </div>
     </div>

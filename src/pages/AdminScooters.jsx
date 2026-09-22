@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useScooters } from '../hooks/useScooters';
+import { useApartments } from '../hooks/useApartments';
 import ScooterFormModal from '../components/admin/ScooterFormModal';
+import ApartmentFormModal from '../components/admin/ApartmentFormModal';
 import AdminCalendar from '../components/admin/AdminCalendar';
 import { Plus, Edit2, Trash2, Loader2, AlertCircle, Calendar, Bike, Building2 } from 'lucide-react';
 
@@ -9,36 +11,66 @@ const AdminDashboard = () => {
   
   // Scooter State
   const { scooters, loading: scootersLoading, error: scootersError, addScooter, updateScooter, deleteScooter, uploadImage } = useScooters();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isScooterModalOpen, setIsScooterModalOpen] = useState(false);
   const [editingScooter, setEditingScooter] = useState(null);
+
+  // Apartment State
+  const { apartments, loading: apartmentsLoading, error: apartmentsError, addApartment, updateApartment, deleteApartment, uploadImages } = useApartments();
+  const [isApartmentModalOpen, setIsApartmentModalOpen] = useState(false);
+  const [editingApartment, setEditingApartment] = useState(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const handleAddClick = () => {
+  const handleAddScooterClick = () => {
     setEditingScooter(null);
-    setIsModalOpen(true);
+    setIsScooterModalOpen(true);
   };
 
-  const handleEditClick = (scooter) => {
+  const handleEditScooterClick = (scooter) => {
     setEditingScooter(scooter);
-    setIsModalOpen(true);
+    setIsScooterModalOpen(true);
   };
 
-  const handleDeleteClick = async (id) => {
+  const handleDeleteScooterClick = async (id) => {
     if (window.confirm('Are you sure you want to delete this scooter?')) {
       await deleteScooter(id);
     }
   };
 
-  const handleSave = async (scooterData) => {
+  const handleSaveScooter = async (scooterData) => {
     if (editingScooter) {
       await updateScooter(editingScooter.id, scooterData);
     } else {
       await addScooter(scooterData);
     }
-    setIsModalOpen(false);
+    setIsScooterModalOpen(false);
+  };
+
+  const handleAddApartmentClick = () => {
+    setEditingApartment(null);
+    setIsApartmentModalOpen(true);
+  };
+
+  const handleEditApartmentClick = (apartment) => {
+    setEditingApartment(apartment);
+    setIsApartmentModalOpen(true);
+  };
+
+  const handleDeleteApartmentClick = async (id) => {
+    if (window.confirm('Are you sure you want to delete this apartment?')) {
+      await deleteApartment(id);
+    }
+  };
+
+  const handleSaveApartment = async (apartmentData) => {
+    if (editingApartment) {
+      await updateApartment(editingApartment.id, apartmentData);
+    } else {
+      await addApartment(apartmentData);
+    }
+    setIsApartmentModalOpen(false);
   };
 
   return (
@@ -98,7 +130,7 @@ const AdminDashboard = () => {
           <div className="animate-in fade-in duration-300">
             <div className="flex justify-end mb-6">
               <button 
-                onClick={handleAddClick}
+                onClick={handleAddScooterClick}
                 className="inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-cyan-500 text-white px-6 py-3 rounded-xl font-medium transition-colors shadow-sm"
               >
                 <Plus size={20} />
@@ -155,14 +187,14 @@ const AdminDashboard = () => {
                           <td className="px-6 py-4 text-right">
                             <div className="flex items-center justify-end gap-2">
                               <button 
-                                onClick={() => handleEditClick(scooter)}
+                                onClick={() => handleEditScooterClick(scooter)}
                                 className="p-2 text-slate-400 hover:text-cyan-600 hover:bg-cyan-50 rounded-lg transition-colors"
                                 title="Edit"
                               >
                                 <Edit2 size={18} />
                               </button>
                               <button 
-                                onClick={() => handleDeleteClick(scooter.id)}
+                                onClick={() => handleDeleteScooterClick(scooter.id)}
                                 className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                 title="Delete"
                               >
@@ -187,23 +219,122 @@ const AdminDashboard = () => {
           </div>
         )}
 
-        {/* Apartments View (Coming Soon placeholder) */}
+        {/* Apartments View */}
         {activeTab === 'apartments' && (
-          <div className="animate-in fade-in duration-300 py-20 text-center bg-white rounded-3xl border border-slate-100 shadow-sm">
-            <Building2 className="mx-auto h-16 w-16 text-slate-300 mb-4" />
-            <h2 className="text-2xl font-bold text-slate-900 mb-2">Apartment Management</h2>
-            <p className="text-slate-500">Coming soon! Here you will manage your apartments, prices, and features.</p>
+          <div className="animate-in fade-in duration-300">
+            <div className="flex justify-end mb-6">
+              <button 
+                onClick={handleAddApartmentClick}
+                className="inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-cyan-500 text-white px-6 py-3 rounded-xl font-medium transition-colors shadow-sm"
+              >
+                <Plus size={20} />
+                Add New Apartment
+              </button>
+            </div>
+
+            {apartmentsError && (
+              <div className="mb-6 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl flex items-start gap-3">
+                <AlertCircle className="shrink-0 mt-0.5" size={20} />
+                <p className="text-sm">Error connecting to database: {apartmentsError}. Falling back to default data.</p>
+              </div>
+            )}
+
+            {apartmentsLoading ? (
+              <div className="flex justify-center items-center py-32 bg-white rounded-3xl border border-slate-100 shadow-sm">
+                <Loader2 className="animate-spin text-cyan-500" size={48} />
+              </div>
+            ) : (
+              <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-slate-50 border-b border-slate-100">
+                        <th className="px-6 py-4 font-semibold text-sm text-slate-600">Apartment</th>
+                        <th className="px-6 py-4 font-semibold text-sm text-slate-600">Floor/Size</th>
+                        <th className="px-6 py-4 font-semibold text-sm text-slate-600">Capacity</th>
+                        <th className="px-6 py-4 font-semibold text-sm text-slate-600">Status</th>
+                        <th className="px-6 py-4 font-semibold text-sm text-slate-600">Amenities</th>
+                        <th className="px-6 py-4 font-semibold text-sm text-slate-600 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {apartments.map(apartment => (
+                        <tr key={apartment.id} className="hover:bg-slate-50/50 transition-colors">
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-4">
+                              {apartment.images && apartment.images.length > 0 ? (
+                                <img src={apartment.images[0]} alt={apartment.title_en} className="w-16 h-12 object-cover rounded-lg" />
+                              ) : (
+                                <div className="w-16 h-12 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400">
+                                  <Building2 size={24} />
+                                </div>
+                              )}
+                              <span className="font-semibold text-slate-900">{apartment.title_en}</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-slate-600">{apartment.floor_en}</td>
+                          <td className="px-6 py-4 text-slate-600">{apartment.capacity} Persons</td>
+                          <td className="px-6 py-4">
+                            {apartment.status === 'available' ? (
+                              <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-semibold">Available</span>
+                            ) : (
+                              <span className="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-xs font-semibold capitalize">{apartment.status}</span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 text-slate-500 text-sm">
+                            {apartment.amenities_en?.length || 0} items
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              <button 
+                                onClick={() => handleEditApartmentClick(apartment)}
+                                className="p-2 text-slate-400 hover:text-cyan-600 hover:bg-cyan-50 rounded-lg transition-colors"
+                                title="Edit"
+                              >
+                                <Edit2 size={18} />
+                              </button>
+                              <button 
+                                onClick={() => handleDeleteApartmentClick(apartment.id)}
+                                className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                title="Delete"
+                              >
+                                <Trash2 size={18} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                      {apartments.length === 0 && (
+                        <tr>
+                          <td colSpan="6" className="px-6 py-12 text-center text-slate-500">
+                            No apartments found. Click "Add New Apartment" to get started.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
       </div>
 
       <ScooterFormModal 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSave={handleSave}
+        isOpen={isScooterModalOpen}
+        onClose={() => setIsScooterModalOpen(false)}
+        onSave={handleSaveScooter}
         onUploadImage={uploadImage}
         scooter={editingScooter}
+      />
+
+      <ApartmentFormModal
+        isOpen={isApartmentModalOpen}
+        onClose={() => setIsApartmentModalOpen(false)}
+        onSave={handleSaveApartment}
+        onUploadImages={uploadImages}
+        apartment={editingApartment}
       />
     </div>
   );

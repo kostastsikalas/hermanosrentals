@@ -4,10 +4,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { User, Mail, Phone, Calendar, MessageSquare, Car, CheckCircle, Loader2, Home as HomeIcon, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useScooters } from '../hooks/useScooters';
-import { apartments } from '../data/apartments';
+import { useApartments } from '../hooks/useApartments';
 
 const BookingPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -15,6 +15,8 @@ const BookingPage = () => {
   const [isAvailable, setIsAvailable] = useState(true);
   const [serviceType, setServiceType] = useState('scooter'); // 'scooter' or 'apartment'
   const { scooters } = useScooters();
+  const { apartments } = useApartments();
+  const isGreek = i18n.language === 'el';
   
   const [formData, setFormData] = useState({
     firstName: '',
@@ -275,9 +277,10 @@ const BookingPage = () => {
                   {serviceType === 'scooter' && scooters.map(scooter => (
                     <option key={scooter.id} value={scooter.name}>{scooter.name}</option>
                   ))}
-                  {serviceType === 'apartment' && apartments.map(apt => (
-                    <option key={apt.id} value={t(apt.titleKey)}>{t(apt.titleKey)}</option>
-                  ))}
+                  {serviceType === 'apartment' && apartments.map(apt => {
+                    const aptTitle = isGreek ? apt.title_el : apt.title_en;
+                    return <option key={apt.id} value={aptTitle}>{aptTitle}</option>;
+                  })}
                 </select>
                 <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-slate-400">
                   <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>

@@ -4,9 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import { Users, Building2, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const ApartmentCard = ({ apartment }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [currentImageIdx, setCurrentImageIdx] = useState(0);
+
+  const isGreek = i18n.language === 'el';
+  const title = isGreek ? apartment.title_el : apartment.title_en;
+  const floor = isGreek ? apartment.floor_el : apartment.floor_en;
+  const amenities = isGreek ? apartment.amenities_el : apartment.amenities_en;
 
   const nextImage = (e) => {
     e.stopPropagation();
@@ -19,21 +24,27 @@ const ApartmentCard = ({ apartment }) => {
   };
 
   const handleBookNow = () => {
-    navigate('/book', { state: { vehicleName: t(apartment.titleKey) } });
+    navigate('/book', { state: { vehicleName: title, service: 'apartment' } });
   };
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl transition-all duration-300 group flex flex-col h-full">
       {/* Image Carousel */}
       <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
-        <img
-          src={apartment.images[currentImageIdx]}
-          alt={t(apartment.titleKey)}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-        />
+        {apartment.images && apartment.images.length > 0 ? (
+          <img
+            src={apartment.images[currentImageIdx]}
+            alt={title}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-slate-400">
+            <Building2 size={48} />
+          </div>
+        )}
         
         {/* Carousel Controls */}
-        {apartment.images.length > 1 && (
+        {apartment.images && apartment.images.length > 1 && (
           <>
             <button 
               onClick={prevImage}
@@ -59,7 +70,7 @@ const ApartmentCard = ({ apartment }) => {
       </div>
 
       <div className="p-6 flex flex-col flex-grow">
-        <h3 className="text-xl font-bold text-slate-900 mb-4">{t(apartment.titleKey)}</h3>
+        <h3 className="text-xl font-bold text-slate-900 mb-4">{title}</h3>
         
         <div className="flex items-center gap-4 text-sm text-slate-600 mb-6 pb-6 border-b border-slate-100">
           <div className="flex items-center gap-1.5">
@@ -68,16 +79,16 @@ const ApartmentCard = ({ apartment }) => {
           </div>
           <div className="flex items-center gap-1.5">
             <Building2 className="w-4 h-4 text-orange-500" />
-            <span>{t(apartment.floorKey)}</span>
+            <span>{floor}</span>
           </div>
         </div>
 
         <div className="flex-grow mb-6">
           <ul className="space-y-2">
-            {apartment.amenitiesKeys.map((key, idx) => (
+            {amenities && amenities.map((amenity, idx) => (
               <li key={idx} className="flex items-start gap-2 text-slate-600">
                 <Check className="w-4 h-4 text-green-500 mt-1 shrink-0" />
-                <span className="text-sm">{t(key)}</span>
+                <span className="text-sm">{amenity}</span>
               </li>
             ))}
           </ul>
