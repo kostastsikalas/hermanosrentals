@@ -105,5 +105,58 @@
       "title": "4. Vehicle Usage",
       "content": "Driving off-road or on the beach is strictly prohibited. The vehicle is intended solely for transportation within the island's road network."
     }
+  },
+  "bookingPage": {
+    "title": "Book Your Vehicle",
+    "subtitle": "Fill in the details below to complete your reservation.",
+    "formTitle": "Reservation Details",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "vehicle": "Selected Vehicle",
+    "notes": "Additional Notes",
+    "submitBtn": "Confirm Booking",
+    "alert": "Your booking request has been sent! We will confirm it shortly."
+  },
+  "apartmentsPage": {
+    "title": "Our Luxury Apartments",
+    "subtitle": "Experience the ultimate comfort during your stay with our fully equipped apartments.",
+    "bookBtn": "Request to Book",
+    "guests": "guests"
+  },
+  "apartmentsData": {
+    "minos1stFloor": {
+      "title": "Minos Two Bedroom Apartment",
+      "floor": "1st Floor",
+      "amenities": [
+        "Balcony with street view",
+        "Washing machine included"
+      ]
+    },
+    "minosWhite": {
+      "title": "Minos Standard Studio with Yard",
+      "floor": "Ground Floor",
+      "amenities": [
+        "Private yard access"
+      ]
+    },
+    "minosStandard": {
+      "title": "Minos Standard Studio",
+      "floor": "Ground Floor",
+      "amenities": [
+        "Comfortable standard studio setup"
+      ]
+    },
+    "minosDeluxe": {
+      "title": "Minos Deluxe Apartment",
+      "floor": "Ground Floor",
+      "amenities": [
+        "Private yard",
+        "Queen size bed"
+      ]
+    }
   }
 }

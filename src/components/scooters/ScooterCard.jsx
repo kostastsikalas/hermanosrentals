@@ -1,9 +1,11 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { Bike, CheckCircle2 } from 'lucide-react';
 
 const ScooterCard = ({ scooter }) => {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
 
   const currentFeatures = i18n.language.startsWith('el') 
     ? (scooter.features_el || scooter.features || [])
@@ -55,7 +57,10 @@ const ScooterCard = ({ scooter }) => {
         </div>
 
         {/* Action Button */}
-        <button className="w-full bg-slate-900 hover:bg-cyan-500 text-white font-medium py-3.5 px-6 rounded-2xl transition-all duration-300 shadow-md">
+        <button 
+          onClick={() => navigate('/book', { state: { vehicleName: scooter.name, vehicleId: scooter.id } })}
+          className="w-full bg-slate-900 hover:bg-cyan-500 text-white font-medium py-3.5 px-6 rounded-2xl transition-all duration-300 shadow-md"
+        >
           {t('scootersPage.bookBtn')}
         </button>
       </div>
