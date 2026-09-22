@@ -12,7 +12,8 @@ const ApartmentFormModal = ({ isOpen, onClose, onSave, onUploadImages, apartment
     status: 'available',
     amenities_en: [''],
     amenities_el: [''],
-    images: []
+    images: [],
+    price: ''
   });
   
   const [newImages, setNewImages] = useState([]); // File objects
@@ -29,7 +30,8 @@ const ApartmentFormModal = ({ isOpen, onClose, onSave, onUploadImages, apartment
         status: apartment.status || 'available',
         amenities_en: apartment.amenities_en?.length ? apartment.amenities_en : [''],
         amenities_el: apartment.amenities_el?.length ? apartment.amenities_el : [''],
-        images: apartment.images || []
+        images: apartment.images || [],
+        price: apartment.price || ''
       });
       setImagePreviews(apartment.images || []);
     } else {
@@ -42,7 +44,8 @@ const ApartmentFormModal = ({ isOpen, onClose, onSave, onUploadImages, apartment
         status: 'available',
         amenities_en: [''],
         amenities_el: [''],
-        images: []
+        images: [],
+        price: ''
       });
       setImagePreviews([]);
     }
@@ -245,6 +248,21 @@ const ApartmentFormModal = ({ isOpen, onClose, onSave, onUploadImages, apartment
                 <option value="maintenance">Maintenance</option>
                 <option value="hidden">Hidden</option>
               </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Price per Night (€)</label>
+              <input 
+                type="number" 
+                step="0.01"
+                required
+                value={formData.price}
+                onChange={(e) => setFormData({...formData, price: parseFloat(e.target.value)})}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                placeholder="e.g. 80.00"
+              />
             </div>
           </div>
 

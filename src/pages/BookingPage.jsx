@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { User, Mail, Phone, Calendar, MessageSquare, Car, CheckCircle, Loader2, Home as HomeIcon, AlertCircle } from 'lucide-react';
+import { User, Mail, Phone, Calendar, MessageSquare, Car, CheckCircle, Loader2, Home as HomeIcon, AlertCircle, Check } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useScooters } from '../hooks/useScooters';
 import { useApartments } from '../hooks/useApartments';
@@ -13,7 +13,7 @@ const BookingPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [checkingAvailability, setCheckingAvailability] = useState(false);
   const [isAvailable, setIsAvailable] = useState(true);
-  const [serviceType, setServiceType] = useState('scooter'); // 'scooter' or 'apartment'
+  
   const { scooters } = useScooters();
   const { apartments } = useApartments();
   const isGreek = i18n.language === 'el';
@@ -25,69 +25,122 @@ const BookingPage = () => {
     phone: '',
     startDate: '',
     endDate: '',
-    vehicleName: '',
     notes: ''
   });
+
+  const [selectedScooter, setSelectedScooter] = useState(null);
+  const [selectedApartment, setSelectedApartment] = useState(null);
 
   useEffect(() => {
     // Scroll to top on mount
     window.scrollTo(0, 0);
-    // Populate vehicle name if passed via state
+    // Populate selection if passed via state
     if (location.state && location.state.vehicleName) {
-      setFormData(prev => ({ ...prev, vehicleName: location.state.vehicleName }));
-      // Try to determine service type based on state if possible
-      if (location.state.service) {
-        setServiceType(location.state.service);
+      const passedName = location.state.vehicleName;
+      if (location.state.service === 'apartment') {
+        const apt = apartments.find(a => a.title_en === passedName || a.title_el === passedName);
+        if (apt) setSelectedApartment(apt);
+      } else {
+        const sct = scooters.find(s => s.name === passedName);
+        if (sct) setSelectedScooter(sct);
       }
     }
-  }, [location]);
+  }, [location, apartments, scooters]);
 
-  // Check availability when dates or vehicle changes
+  // Check availability when dates or selections change
   useEffect(() => {
     const checkAvailability = async () => {
-      if (!formData.startDate || !formData.endDate || !formData.vehicleName) {
+      if (!formData.startDate || !formData.endDate) {
+        setIsAvailable(true);
+        return;
+      }
+      if (!selectedScooter && !selectedApartment) {
         setIsAvailable(true);
         return;
       }
       
       setCheckingAvailability(true);
       try {
-        const { data, error } = await supabase
-          .from('bookings')
-          .select('id, start_date, end_date, status')
-          .eq('vehicle_name', formData.vehicleName)
-          .neq('status', 'cancelled'); // ignore cancelled bookings
-
-        if (error) throw error;
-
-        // Check for overlaps
-        const start = new Date(formData.startDate);
-        const end = new Date(formData.endDate);
+        const vehicleNames = [];
+        if (selectedScooter) vehicleNames.push(selectedScooter.name);
+        if (selectedApartment) vehicleNames.push(isGreek ? selectedApartment.title_el : selectedApartment.title_en);
         
-        const hasOverlap = data.some(booking => {
-          const bStart = new Date(booking.start_date);
-          const bEnd = new Date(booking.end_date);
-          // Overlap condition: RequestStart <= BookingEnd AND RequestEnd >= BookingStart
-          return (start <= bEnd && end >= bStart);
-        });
+        let isOverlapping = false;
 
-        setIsAvailable(!hasOverlap);
+        for (const vName of vehicleNames) {
+          const { data, error } = await supabase
+            .from('bookings')
+            .select('start_date, end_date, status')
+            .eq('vehicle_name', vName)
+            .neq('status', 'cancelled');
+
+          if (error) continue;
+
+          const start = new Date(formData.startDate);
+          const end = new Date(formData.endDate);
+          
+          const hasOverlap = data.some(booking => {
+            const bStart = new Date(booking.start_date);
+            const bEnd = new Date(booking.end_date);
+            return (start <= bEnd && end >= bStart);
+          });
+
+          if (hasOverlap) {
+            isOverlapping = true;
+            break;
+          }
+        }
+
+        setIsAvailable(!isOverlapping);
       } catch (error) {
         console.error('Error checking availability:', error);
-        setIsAvailable(true); // Default to true if check fails
+        setIsAvailable(true);
       } finally {
         setCheckingAvailability(false);
       }
     };
 
     checkAvailability();
-  }, [formData.startDate, formData.endDate, formData.vehicleName]);
+  }, [formData.startDate, formData.endDate, selectedScooter, selectedApartment, isGreek]);
+
+  const calculateDays = () => {
+    if (!formData.startDate || !formData.endDate) return 0;
+    const start = new Date(formData.startDate);
+    const end = new Date(formData.endDate);
+    if (end < start) return 0;
+    const diffTime = Math.abs(end - start);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays > 0 ? diffDays : 1;
+  };
+
+  const days = calculateDays();
+  const scooterPrice = selectedScooter ? parseFloat(selectedScooter.price || 0) : 0;
+  const apartmentPrice = selectedApartment ? parseFloat(selectedApartment.price || 0) : 0;
+  const totalPrice = days * (scooterPrice + apartmentPrice);
+
+  const getCombinedName = () => {
+    const names = [];
+    if (selectedApartment) {
+      names.push(isGreek ? selectedApartment.title_el : selectedApartment.title_en);
+    }
+    if (selectedScooter) {
+      names.push(selectedScooter.name);
+    }
+    return names.join(' & ');
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!selectedScooter && !selectedApartment) {
+      alert(t('bookingPage.selectWarning', 'Please select at least one scooter or apartment to book.'));
+      return;
+    }
+    
     setIsSubmitting(true);
     
     try {
+      const combinedName = getCombinedName();
+      
       const { error } = await supabase
         .from('bookings')
         .insert([{
@@ -97,7 +150,7 @@ const BookingPage = () => {
           phone: formData.phone,
           start_date: formData.startDate,
           end_date: formData.endDate,
-          vehicle_name: formData.vehicleName,
+          vehicle_name: combinedName,
           notes: formData.notes
         }]);
 
@@ -115,7 +168,7 @@ const BookingPage = () => {
 
   return (
     <div className="pt-28 pb-12 md:pb-20 bg-slate-50 min-h-screen">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="text-center mb-10 md:mb-16">
           <h1 className="text-3xl md:text-5xl font-bold text-slate-900 mb-4">{t('bookingPage.title')}</h1>
@@ -132,190 +185,226 @@ const BookingPage = () => {
             {t('bookingPage.formTitle')}
           </h2>
           
-          <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+          <form onSubmit={handleSubmit} className="space-y-10 relative z-10">
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
-                  <User size={18} />
+            {/* 1. Personal Details */}
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">1. {t('bookingPage.personalDetails', 'Personal Details')}</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
+                    <User size={18} />
+                  </div>
+                  <input 
+                    type="text" 
+                    required
+                    value={formData.firstName}
+                    onChange={(e) => setFormData({...formData, firstName: e.target.value})}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300"
+                    placeholder={t('bookingPage.firstName')}
+                  />
                 </div>
-                <input 
-                  type="text" 
-                  required
-                  value={formData.firstName}
-                  onChange={(e) => setFormData({...formData, firstName: e.target.value})}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300"
-                  placeholder={t('bookingPage.firstName')}
-                />
+
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
+                    <User size={18} />
+                  </div>
+                  <input 
+                    type="text" 
+                    required
+                    value={formData.lastName}
+                    onChange={(e) => setFormData({...formData, lastName: e.target.value})}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300"
+                    placeholder={t('bookingPage.lastName')}
+                  />
+                </div>
               </div>
 
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
-                  <User size={18} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
+                    <Mail size={18} />
+                  </div>
+                  <input 
+                    type="email" 
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300"
+                    placeholder={t('bookingPage.email')}
+                  />
                 </div>
-                <input 
-                  type="text" 
-                  required
-                  value={formData.lastName}
-                  onChange={(e) => setFormData({...formData, lastName: e.target.value})}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300"
-                  placeholder={t('bookingPage.lastName')}
-                />
-              </div>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
-                  <Mail size={18} />
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
+                    <Phone size={18} />
+                  </div>
+                  <input 
+                    type="tel" 
+                    required
+                    value={formData.phone}
+                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300"
+                    placeholder={t('bookingPage.phone')}
+                  />
                 </div>
-                <input 
-                  type="email" 
-                  required
-                  value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300"
-                  placeholder={t('bookingPage.email')}
-                />
-              </div>
-
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
-                  <Phone size={18} />
-                </div>
-                <input 
-                  type="tel" 
-                  required
-                  value={formData.phone}
-                  onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300"
-                  placeholder={t('bookingPage.phone')}
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
-                  <Calendar size={18} />
-                </div>
-                <input 
-                  type="date" 
-                  required
-                  value={formData.startDate}
-                  onChange={(e) => setFormData({...formData, startDate: e.target.value})}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300"
-                  title={t('bookingPage.startDate')}
-                />
               </div>
 
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
-                  <Calendar size={18} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
+                    <Calendar size={18} />
+                  </div>
+                  <input 
+                    type="date" 
+                    required
+                    value={formData.startDate}
+                    onChange={(e) => setFormData({...formData, startDate: e.target.value})}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300"
+                    title={t('bookingPage.startDate')}
+                  />
                 </div>
-                <input 
-                  type="date" 
-                  required
-                  value={formData.endDate}
-                  onChange={(e) => setFormData({...formData, endDate: e.target.value})}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300"
-                  title={t('bookingPage.endDate')}
-                />
-              </div>
-            </div>
 
-            {/* Service Type Selection */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-slate-700 mb-2 ml-1">{t('bookingPage.serviceTypeLabel', 'What would you like to book?')}</label>
-              <div className="grid grid-cols-2 gap-4">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setServiceType('scooter');
-                    setFormData(prev => ({ ...prev, vehicleName: '' }));
-                  }}
-                  className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl border-2 transition-all ${
-                    serviceType === 'scooter' 
-                      ? 'border-cyan-500 bg-cyan-50 text-cyan-700' 
-                      : 'border-slate-200 bg-white text-slate-500 hover:bg-slate-50'
-                  }`}
-                >
-                  <Car size={20} />
-                  <span className="font-medium">{t('bookingPage.serviceScooter', 'Scooter')}</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setServiceType('apartment');
-                    setFormData(prev => ({ ...prev, vehicleName: '' }));
-                  }}
-                  className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl border-2 transition-all ${
-                    serviceType === 'apartment' 
-                      ? 'border-cyan-500 bg-cyan-50 text-cyan-700' 
-                      : 'border-slate-200 bg-white text-slate-500 hover:bg-slate-50'
-                  }`}
-                >
-                  <HomeIcon size={20} />
-                  <span className="font-medium">{t('bookingPage.serviceApartment', 'Apartment')}</span>
-                </button>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
+                    <Calendar size={18} />
+                  </div>
+                  <input 
+                    type="date" 
+                    required
+                    value={formData.endDate}
+                    onChange={(e) => setFormData({...formData, endDate: e.target.value})}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300"
+                    title={t('bookingPage.endDate')}
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="relative group mb-6">
-              <label className="block text-sm font-medium text-slate-700 mb-2 ml-1">{t('bookingPage.selectItemLabel', 'Select Option')}</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
-                  {serviceType === 'scooter' ? <Car size={18} /> : <HomeIcon size={18} />}
-                </div>
-                <select 
-                  value={formData.vehicleName}
-                  onChange={(e) => setFormData({...formData, vehicleName: e.target.value})}
-                  required
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300 appearance-none"
-                >
-                  <option value="" disabled>{t('bookingPage.selectItemPlaceholder', '-- Select from list --')}</option>
-                  {serviceType === 'scooter' && scooters.map(scooter => (
-                    <option key={scooter.id} value={scooter.name}>{scooter.name}</option>
-                  ))}
-                  {serviceType === 'apartment' && apartments.map(apt => {
-                    const aptTitle = isGreek ? apt.title_el : apt.title_en;
-                    return <option key={apt.id} value={aptTitle}>{aptTitle}</option>;
+            {/* 2. Visual Selection */}
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">2. {t('bookingPage.chooseOptions', 'Choose Accommodation & Vehicles')}</h3>
+              <p className="text-sm text-slate-500">{t('bookingPage.selectHelp', 'You can select an apartment, a scooter, or both!')}</p>
+
+              {/* Apartments */}
+              <div>
+                <h4 className="font-medium text-slate-700 mb-4 flex items-center gap-2"><HomeIcon size={18} /> {t('bookingPage.selectApartment', 'Select Apartment (Optional)')}</h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {apartments.map(apt => {
+                    const title = isGreek ? apt.title_el : apt.title_en;
+                    const isSelected = selectedApartment?.id === apt.id;
+                    const price = parseFloat(apt.price || 0).toFixed(2);
+                    
+                    return (
+                      <div 
+                        key={apt.id}
+                        onClick={() => setSelectedApartment(isSelected ? null : apt)}
+                        className={`cursor-pointer rounded-2xl overflow-hidden border-2 transition-all relative group ${isSelected ? 'border-cyan-500 shadow-md ring-4 ring-cyan-500/10' : 'border-slate-200 hover:border-cyan-300 hover:shadow-sm'}`}
+                      >
+                        <div className="aspect-[4/3] bg-slate-100 overflow-hidden">
+                          {apt.images && apt.images.length > 0 ? (
+                            <img src={apt.images[0]} alt={title} className={`w-full h-full object-cover transition-transform duration-500 ${isSelected ? 'scale-105' : 'group-hover:scale-105'}`} />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-slate-300"><HomeIcon size={32} /></div>
+                          )}
+                        </div>
+                        <div className="p-3 bg-white">
+                          <p className="font-semibold text-slate-900 text-sm truncate">{title}</p>
+                          <p className="text-cyan-600 font-bold text-sm">€{price}<span className="text-xs text-slate-500 font-normal"> / {t('bookingPage.day', 'day')}</span></p>
+                        </div>
+                        {isSelected && (
+                          <div className="absolute top-2 right-2 bg-cyan-500 text-white rounded-full p-1 shadow-sm">
+                            <Check size={16} strokeWidth={3} />
+                          </div>
+                        )}
+                      </div>
+                    )
                   })}
-                </select>
-                <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-slate-400">
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+              </div>
+
+              {/* Scooters */}
+              <div className="pt-4">
+                <h4 className="font-medium text-slate-700 mb-4 flex items-center gap-2"><Car size={18} /> {t('bookingPage.selectScooter', 'Select Scooter (Optional)')}</h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {scooters.map(scooter => {
+                    const isSelected = selectedScooter?.id === scooter.id;
+                    const price = parseFloat(scooter.price || 0).toFixed(2);
+                    
+                    return (
+                      <div 
+                        key={scooter.id}
+                        onClick={() => setSelectedScooter(isSelected ? null : scooter)}
+                        className={`cursor-pointer rounded-2xl overflow-hidden border-2 transition-all relative group ${isSelected ? 'border-cyan-500 shadow-md ring-4 ring-cyan-500/10' : 'border-slate-200 hover:border-cyan-300 hover:shadow-sm'}`}
+                      >
+                        <div className="aspect-[4/3] bg-slate-100 overflow-hidden p-2">
+                          {scooter.image ? (
+                            <img src={scooter.image} alt={scooter.name} className={`w-full h-full object-contain mix-blend-multiply transition-transform duration-500 ${isSelected ? 'scale-105' : 'group-hover:scale-105'}`} />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-slate-300"><Car size={32} /></div>
+                          )}
+                        </div>
+                        <div className="p-3 bg-white border-t border-slate-50">
+                          <p className="font-semibold text-slate-900 text-sm truncate">{scooter.name}</p>
+                          <p className="text-cyan-600 font-bold text-sm">€{price}<span className="text-xs text-slate-500 font-normal"> / {t('bookingPage.day', 'day')}</span></p>
+                        </div>
+                        {isSelected && (
+                          <div className="absolute top-2 right-2 bg-cyan-500 text-white rounded-full p-1 shadow-sm">
+                            <Check size={16} strokeWidth={3} />
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             </div>
 
             {/* Availability Warning */}
-            {(!isAvailable && formData.startDate && formData.endDate && formData.vehicleName) && (
-              <div className="p-4 bg-red-50 text-red-600 rounded-xl flex items-start gap-3 border border-red-100 mb-6">
+            {(!isAvailable && formData.startDate && formData.endDate && (selectedScooter || selectedApartment)) && (
+              <div className="p-4 bg-red-50 text-red-600 rounded-xl flex items-start gap-3 border border-red-100">
                 <AlertCircle size={20} className="shrink-0 mt-0.5" />
-                <p className="text-sm font-medium">{t('bookingPage.notAvailable', 'Sorry, the selected dates are already booked for this option.')}</p>
+                <p className="text-sm font-medium">{t('bookingPage.notAvailable', 'Sorry, one or more selected items are already booked for these dates.')}</p>
               </div>
             )}
 
-            <div className="relative group">
-              <div className="absolute top-4 left-4 flex items-start pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
-                <MessageSquare size={18} />
+            {/* 3. Notes & Total */}
+            <div className="space-y-6 border-t pt-8">
+              <div className="relative group">
+                <div className="absolute top-4 left-4 flex items-start pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
+                  <MessageSquare size={18} />
+                </div>
+                <textarea 
+                  rows="4"
+                  value={formData.notes}
+                  onChange={(e) => setFormData({...formData, notes: e.target.value})}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300 resize-none"
+                  placeholder={t('bookingPage.notes')}
+                ></textarea>
               </div>
-              <textarea 
-                rows="4"
-                value={formData.notes}
-                onChange={(e) => setFormData({...formData, notes: e.target.value})}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300 resize-none"
-                placeholder={t('bookingPage.notes')}
-              ></textarea>
-            </div>
 
-            <button 
-              type="submit" 
-              disabled={isSubmitting || checkingAvailability || !isAvailable}
-              className="w-full md:w-auto min-w-[200px] mx-auto bg-slate-900 hover:bg-cyan-500 disabled:bg-slate-400 disabled:cursor-not-allowed text-white font-medium py-4 px-8 rounded-2xl transition-all duration-300 flex items-center justify-center gap-2 mt-4 shadow-[0_4px_14px_0_rgb(0,0,0,0.1)] hover:shadow-[0_6px_20px_rgba(6,182,212,0.23)] transform hover:-translate-y-0.5"
-            >
-              {(isSubmitting || checkingAvailability) ? <Loader2 className="animate-spin" size={20} /> : t('bookingPage.submitBtn')}
-            </button>
+              {/* Price Summary */}
+              <div className="bg-slate-900 text-white p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6">
+                <div>
+                  <p className="text-slate-400 text-sm font-medium mb-1">{t('bookingPage.totalLabel', 'Estimated Total')}</p>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-bold text-cyan-400">€{totalPrice.toFixed(2)}</span>
+                    <span className="text-slate-400 text-sm">
+                      {days > 0 ? `(${days} ${t('bookingPage.days', 'days')})` : ''}
+                    </span>
+                  </div>
+                </div>
+
+                <button 
+                  type="submit" 
+                  disabled={isSubmitting || checkingAvailability || !isAvailable || (!selectedScooter && !selectedApartment)}
+                  className="w-full md:w-auto bg-cyan-500 hover:bg-cyan-400 disabled:bg-slate-700 disabled:text-slate-400 disabled:cursor-not-allowed text-slate-900 font-bold py-4 px-8 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg"
+                >
+                  {(isSubmitting || checkingAvailability) ? <Loader2 className="animate-spin" size={20} /> : t('bookingPage.submitBtn')}
+                </button>
+              </div>
+            </div>
           </form>
         </div>
       </div>

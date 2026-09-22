@@ -253,6 +253,7 @@ const AdminDashboard = () => {
                         <th className="px-6 py-4 font-semibold text-sm text-slate-600">Floor/Size</th>
                         <th className="px-6 py-4 font-semibold text-sm text-slate-600">Capacity</th>
                         <th className="px-6 py-4 font-semibold text-sm text-slate-600">Status</th>
+                        <th className="px-6 py-4 font-semibold text-sm text-slate-600">Price/Night</th>
                         <th className="px-6 py-4 font-semibold text-sm text-slate-600">Amenities</th>
                         <th className="px-6 py-4 font-semibold text-sm text-slate-600 text-right">Actions</th>
                       </tr>
@@ -281,6 +282,7 @@ const AdminDashboard = () => {
                               <span className="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-xs font-semibold capitalize">{apartment.status}</span>
                             )}
                           </td>
+                          <td className="px-6 py-4 text-slate-900 font-medium">€{apartment.price || '0.00'}</td>
                           <td className="px-6 py-4 text-slate-500 text-sm">
                             {apartment.amenities_en?.length || 0} items
                           </td>
