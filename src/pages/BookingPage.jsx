@@ -198,7 +198,7 @@ const BookingPage = () => {
       setIsSuccess(true);
     } catch (error) {
       console.error('Error submitting booking:', error);
-      alert('There was an error submitting your request. Please try again.');
+      alert('Σφάλμα: ' + (error.message || JSON.stringify(error)));
     } finally {
       setIsSubmitting(false);
     }
