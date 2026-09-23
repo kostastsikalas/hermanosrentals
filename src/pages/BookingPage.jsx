@@ -179,13 +179,13 @@ const BookingPage = () => {
           notes: formData.notes || '-'
         };
 
-        // TODO: Replace with actual keys from EmailJS
-        const SERVICE_ID = 'YOUR_SERVICE_ID';
-        const PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
-        const CUSTOMER_TEMPLATE = 'YOUR_CUSTOMER_TEMPLATE_ID';
-        const ADMIN_TEMPLATE = 'YOUR_ADMIN_TEMPLATE_ID';
+        // TODO: Replace with actual template keys from EmailJS when provided
+        const SERVICE_ID = 'service_xz68nzs';
+        const PUBLIC_KEY = 'K4QWJAJ8b3K8ryYSR';
+        const CUSTOMER_TEMPLATE = 'template_2gz1wsq';
+        const ADMIN_TEMPLATE = 'template_jaryxat';
 
-        if (SERVICE_ID !== 'YOUR_SERVICE_ID') {
+        if (CUSTOMER_TEMPLATE !== 'YOUR_CUSTOMER_TEMPLATE_ID') {
           // Send to Customer
           await emailjs.send(SERVICE_ID, CUSTOMER_TEMPLATE, templateParams, PUBLIC_KEY);
           // Send to Admin
