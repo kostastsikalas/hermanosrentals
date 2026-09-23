@@ -14,68 +14,30 @@ export function useReservations() {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('reservations')
+        .from('bookings')
         .select('*');
 
       if (error) throw error;
       
       // Parse ISO strings back to Date objects for react-big-calendar
-      const parsedData = (data || []).map(res => ({
-        ...res,
-        start_time: new Date(res.start_time),
-        end_time: new Date(res.end_time)
+      // Map bookings table schema to what AdminCalendar expects
+      const parsedData = (data || []).map(b => ({
+        id: b.id,
+        title: `${b.first_name} ${b.last_name} - ${b.vehicle_name}`,
+        start_time: new Date(b.start_date),
+        end_time: new Date(b.end_date),
+        type: (b.vehicle_name || '').toLowerCase().includes('apartment') || (b.vehicle_name || '').toLowerCase().includes('διαμέρισμα') ? 'apartment' : 'scooter',
+        status: b.status || 'pending',
+        customer_details: `${b.phone} | ${b.email} ${b.notes ? `| Notes: ${b.notes}` : ''}`
       }));
 
       setReservations(parsedData);
     } catch (err) {
       console.error('Error fetching reservations:', err);
       setError(err.message);
-      // Fallback dummy data if table is missing or error
-      setReservations([
-        {
-          id: 'dummy-1',
-          title: 'Booking: Vespa Primavera - Kostas',
-          start_time: new Date(),
-          end_time: new Date(new Date().setHours(new Date().getHours() + 48)),
-          type: 'scooter',
-          status: 'confirmed',
-          customer_details: 'Kostas T. - +30 6900000000'
-        },
-        {
-          id: 'dummy-2',
-          title: 'Booking: Sea View Apt - Maria',
-          start_time: new Date(new Date().setDate(new Date().getDate() + 2)),
-          end_time: new Date(new Date().setDate(new Date().getDate() + 7)),
-          type: 'apartment',
-          status: 'pending',
-          customer_details: 'Maria K. - +30 6911111111'
-        }
-      ]);
+      setReservations([]);
     } finally {
       setLoading(false);
-    }
-  }
-
-  async function addReservation(reservation) {
-    try {
-      const { data, error } = await supabase
-        .from('reservations')
-        .insert([reservation])
-        .select();
-
-      if (error) throw error;
-      if (data) {
-        const newRes = {
-          ...data[0],
-          start_time: new Date(data[0].start_time),
-          end_time: new Date(data[0].end_time)
-        };
-        setReservations(prev => [...prev, newRes]);
-      }
-      return { success: true };
-    } catch (err) {
-      console.error('Error adding reservation:', err);
-      return { success: false, error: err.message };
     }
   }
 
@@ -83,7 +45,6 @@ export function useReservations() {
     reservations,
     loading,
     error,
-    addReservation,
     refreshReservations: fetchReservations
   };
 }
