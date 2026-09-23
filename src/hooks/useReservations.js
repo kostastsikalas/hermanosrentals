@@ -29,7 +29,9 @@ export function useReservations() {
         end_time: new Date(b.end_date),
         type: (b.vehicle_name || '').toLowerCase().includes('apartment') || (b.vehicle_name || '').toLowerCase().includes('διαμέρισμα') ? 'apartment' : 'scooter',
         status: b.status || 'pending',
-        customer_details: `${b.phone} | ${b.email} ${b.notes ? `| Notes: ${b.notes}` : ''}`
+        raw_status: b.status || 'pending',
+        customer_details: `${b.phone} | ${b.email} ${b.notes ? `| Notes: ${b.notes}` : ''}`,
+        raw_notes: b.notes || ''
       }));
 
       setReservations(parsedData);
@@ -42,10 +44,60 @@ export function useReservations() {
     }
   }
 
+  async function updateReservation(id, updates) {
+    try {
+      const { data, error } = await supabase
+        .from('bookings')
+        .update(updates)
+        .eq('id', id)
+        .select('*');
+
+      if (error) throw error;
+      
+      if (data && data.length > 0) {
+        const b = data[0];
+        const updatedRes = {
+          id: b.id,
+          booking_code: b.booking_code,
+          title: `${b.booking_code ? `[${b.booking_code}] ` : ''}${b.first_name} ${b.last_name} - ${b.vehicle_name}`,
+          start_time: new Date(b.start_date),
+          end_time: new Date(b.end_date),
+          type: (b.vehicle_name || '').toLowerCase().includes('apartment') || (b.vehicle_name || '').toLowerCase().includes('διαμέρισμα') ? 'apartment' : 'scooter',
+          status: b.status || 'pending',
+          customer_details: `${b.phone} | ${b.email} ${b.notes ? `| Notes: ${b.notes}` : ''}`,
+          raw_notes: b.notes || '' // keep raw notes for editing
+        };
+        setReservations(prev => prev.map(r => r.id === id ? updatedRes : r));
+      }
+      return { success: true };
+    } catch (err) {
+      console.error('Error updating reservation:', err);
+      return { success: false, error: err.message };
+    }
+  }
+
+  async function deleteReservation(id) {
+    try {
+      const { error } = await supabase
+        .from('bookings')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      setReservations(prev => prev.filter(r => r.id !== id));
+      return { success: true };
+    } catch (err) {
+      console.error('Error deleting reservation:', err);
+      return { success: false, error: err.message };
+    }
+  }
+
   return {
     reservations,
     loading,
     error,
+    updateReservation,
+    deleteReservation,
     refreshReservations: fetchReservations
   };
 }
