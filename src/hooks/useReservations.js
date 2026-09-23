@@ -23,7 +23,8 @@ export function useReservations() {
       // Map bookings table schema to what AdminCalendar expects
       const parsedData = (data || []).map(b => ({
         id: b.id,
-        title: `${b.first_name} ${b.last_name} - ${b.vehicle_name}`,
+        booking_code: b.booking_code,
+        title: `${b.booking_code ? `[${b.booking_code}] ` : ''}${b.first_name} ${b.last_name} - ${b.vehicle_name}`,
         start_time: new Date(b.start_date),
         end_time: new Date(b.end_date),
         type: (b.vehicle_name || '').toLowerCase().includes('apartment') || (b.vehicle_name || '').toLowerCase().includes('διαμέρισμα') ? 'apartment' : 'scooter',

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { User, Mail, Phone, Calendar, MessageSquare, Car, CheckCircle, Loader2, Home as HomeIcon, AlertCircle, Check } from 'lucide-react';
+import emailjs from '@emailjs/browser';
 import { supabase } from '../lib/supabase';
 import { useScooters } from '../hooks/useScooters';
 import { useApartments } from '../hooks/useApartments';
@@ -130,6 +131,10 @@ const BookingPage = () => {
     return names.join(' & ');
   };
 
+  const generateBookingCode = () => {
+    return 'HRM-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!selectedScooter && !selectedApartment) {
@@ -141,6 +146,7 @@ const BookingPage = () => {
     
     try {
       const combinedName = getCombinedName();
+      const bookingCode = generateBookingCode();
       
       const { error } = await supabase
         .from('bookings')
@@ -152,11 +158,43 @@ const BookingPage = () => {
           start_date: formData.startDate,
           end_date: formData.endDate,
           vehicle_name: combinedName,
-          notes: formData.notes
+          notes: formData.notes,
+          booking_code: bookingCode
         }]);
 
       if (error) throw error;
       
+      // Send Emails via EmailJS
+      try {
+        const templateParams = {
+          booking_code: bookingCode,
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+          start_date: formData.startDate,
+          end_date: formData.endDate,
+          vehicle_name: combinedName,
+          total_price: totalPrice,
+          notes: formData.notes || '-'
+        };
+
+        // TODO: Replace with actual keys from EmailJS
+        const SERVICE_ID = 'YOUR_SERVICE_ID';
+        const PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
+        const CUSTOMER_TEMPLATE = 'YOUR_CUSTOMER_TEMPLATE_ID';
+        const ADMIN_TEMPLATE = 'YOUR_ADMIN_TEMPLATE_ID';
+
+        if (SERVICE_ID !== 'YOUR_SERVICE_ID') {
+          // Send to Customer
+          await emailjs.send(SERVICE_ID, CUSTOMER_TEMPLATE, templateParams, PUBLIC_KEY);
+          // Send to Admin
+          await emailjs.send(SERVICE_ID, ADMIN_TEMPLATE, templateParams, PUBLIC_KEY);
+        }
+      } catch (emailError) {
+        console.error('Failed to send email:', emailError);
+      }
+
       setIsSuccess(true);
     } catch (error) {
       console.error('Error submitting booking:', error);
