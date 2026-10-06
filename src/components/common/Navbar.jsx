@@ -45,8 +45,13 @@ const Navbar = () => {
     );
   }
 
+  const isLightBgPage = ['/book', '/terms'].includes(location.pathname);
+  const navBgClass = scrolled || isLightBgPage 
+    ? 'bg-slate-950/95 backdrop-blur-md shadow-lg py-3' 
+    : 'bg-transparent py-5';
+
   return (
-    <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-slate-950/95 backdrop-blur-md shadow-lg py-3' : 'bg-transparent py-5'}`}>
+    <nav className={`fixed w-full z-50 transition-all duration-300 ${navBgClass}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="flex justify-center items-center">
           
