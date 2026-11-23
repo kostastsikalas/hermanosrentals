@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useScooters } from '../hooks/useScooters';
 import { useApartments } from '../hooks/useApartments';
+import { useVivaSettings } from '../hooks/useVivaSettings';
 import ScooterFormModal from '../components/admin/ScooterFormModal';
 import ApartmentFormModal from '../components/admin/ApartmentFormModal';
 import AdminCalendar from '../components/admin/AdminCalendar';
-import { Plus, Edit2, Trash2, Loader2, AlertCircle, Calendar, Bike, Building2 } from 'lucide-react';
+import AdminVivaSettings from '../components/admin/AdminVivaSettings';
+import { Plus, Edit2, Trash2, Loader2, AlertCircle, Calendar, Bike, Building2, CreditCard, CheckCircle2 } from 'lucide-react';
 
 const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState('calendar'); // 'calendar', 'scooters', 'apartments'
+  const [activeTab, setActiveTab] = useState('calendar'); // 'calendar', 'scooters', 'apartments', 'viva'
+  
+  // Viva Payment Settings State
+  const viva = useVivaSettings();
   
   // Scooter State
   const { scooters, loading: scootersLoading, error: scootersError, addScooter, updateScooter, deleteScooter, uploadImage } = useScooters();
@@ -114,6 +119,23 @@ const AdminDashboard = () => {
             >
               <Building2 size={18} />
               Apartments
+            </button>
+            <button
+              onClick={() => setActiveTab('viva')}
+              className={`whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 transition-colors ${
+                activeTab === 'viva'
+                  ? 'border-cyan-500 text-cyan-600'
+                  : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+              }`}
+            >
+              <CreditCard size={18} />
+              Viva Payments
+              {viva.isConnected && (
+                <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 text-xs font-semibold px-2 py-0.5 rounded-full">
+                  <CheckCircle2 size={12} />
+                  Έχει ήδη συνδεθεί
+                </span>
+              )}
             </button>
           </nav>
         </div>
@@ -318,6 +340,13 @@ const AdminDashboard = () => {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Viva Payments View */}
+        {activeTab === 'viva' && (
+          <div className="animate-in fade-in duration-300">
+            <AdminVivaSettings viva={viva} />
           </div>
         )}
 
