@@ -6,9 +6,11 @@ import ScooterFormModal from '../components/admin/ScooterFormModal';
 import ApartmentFormModal from '../components/admin/ApartmentFormModal';
 import AdminCalendar from '../components/admin/AdminCalendar';
 import AdminVivaSettings from '../components/admin/AdminVivaSettings';
-import { Plus, Edit2, Trash2, Loader2, AlertCircle, Calendar, Bike, Building2, CreditCard, CheckCircle2 } from 'lucide-react';
+import AdminLoginForm, { checkAdminSession, clearAdminSession } from '../components/admin/AdminLoginForm';
+import { Plus, Edit2, Trash2, Loader2, AlertCircle, Calendar, Bike, Building2, CreditCard, CheckCircle2, LogOut } from 'lucide-react';
 
 const AdminDashboard = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(checkAdminSession());
   const [activeTab, setActiveTab] = useState('calendar'); // 'calendar', 'scooters', 'apartments', 'viva'
   
   // Viva Payment Settings State
@@ -78,13 +80,30 @@ const AdminDashboard = () => {
     setIsApartmentModalOpen(false);
   };
 
+  if (!isAuthenticated) {
+    return <AdminLoginForm onLoginSuccess={() => setIsAuthenticated(true)} />;
+  }
+
   return (
     <div className="pt-24 pb-20 min-h-screen bg-slate-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
         <div className="mb-8 border-b border-slate-200">
-          <h1 className="text-3xl font-bold text-slate-900 mb-6">Admin Dashboard</h1>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <h1 className="text-3xl font-bold text-slate-900">Admin Dashboard</h1>
+            <button
+              onClick={() => {
+                clearAdminSession();
+                setIsAuthenticated(false);
+              }}
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors self-start sm:self-auto border border-slate-200"
+              title="Αποσύνδεση από το διαχειριστικό"
+            >
+              <LogOut size={16} />
+              Αποσύνδεση
+            </button>
+          </div>
           
           <nav className="-mb-px flex space-x-8 overflow-x-auto">
             <button
