@@ -105,6 +105,9 @@ const AdminVivaSettings = ({ viva }) => {
     webhook_key: false,
   });
 
+  const [formError, setFormError] = useState('');
+  const [statusMessage, setStatusMessage] = useState(null); // { type: 'success' | 'error' | 'info', text: string }
+  const [isTesting, setIsTesting] = useState(false);
   const [isFetchingToken, setIsFetchingToken] = useState(false);
 
   const handleFetchWebhookToken = async () => {
