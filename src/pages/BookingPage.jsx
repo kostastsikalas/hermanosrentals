@@ -95,6 +95,23 @@ const BookingPage = () => {
           }
         }
 
+        // Check live Hosthub calendar for the selected apartment
+        if (!isOverlapping && selectedApartment) {
+          try {
+            const hhRes = await fetch(
+              `/api/hosthub-check?apartmentId=${encodeURIComponent(selectedApartment.id)}&hosthubId=${encodeURIComponent(selectedApartment.hosthub_id || '')}&startDate=${formData.startDate}&endDate=${formData.endDate}`
+            );
+            if (hhRes.ok) {
+              const hhData = await hhRes.json();
+              if (hhData && hhData.available === false) {
+                isOverlapping = true;
+              }
+            }
+          } catch {
+            // Ignore transient check errors
+          }
+        }
+
         setIsAvailable(!isOverlapping);
       } catch (error) {
         console.error('Error checking availability:', error);

@@ -6,15 +6,16 @@ import { apartments as fallbackApartments } from '../data/apartments';
 const getFallbackData = () => {
   return fallbackApartments.map(apt => ({
     id: apt.id,
-    title_en: apt.titleKey, // Keep keys for fallback, though DB uses raw text
-    title_el: apt.titleKey,
-    floor_en: apt.floorKey,
-    floor_el: apt.floorKey,
+    title_en: apt.title_en || apt.titleKey,
+    title_el: apt.title_el || apt.titleKey,
+    floor_en: apt.floor_en || apt.floorKey,
+    floor_el: apt.floor_el || apt.floorKey,
     capacity: apt.capacity,
-    amenities_en: apt.amenitiesKeys,
-    amenities_el: apt.amenitiesKeys,
+    price: apt.price,
+    amenities_en: apt.amenities_en || apt.amenitiesKeys,
+    amenities_el: apt.amenities_el || apt.amenitiesKeys,
     images: apt.images,
-    status: 'available'
+    status: apt.status || 'available'
   }));
 };
 

@@ -140,8 +140,43 @@
     "guests": "άτομα"
   },
   "apartmentsData": {
+    "twoBedroom": {
+      "title": "Two Bedroom Apartment",
+      "floor": "1ος Όροφος",
+      "amenities": ["Μπαλκόνι με θέα", "Πλυντήριο ρούχων"]
+    },
+    "deluxeQueen": {
+      "title": "Deluxe Studio with Queen size bed",
+      "floor": "Ισόγειο",
+      "amenities": ["Ιδιωτική αυλή", "Κρεβάτι Queen size"]
+    },
+    "secondFloor4": {
+      "title": "Second floor number 4",
+      "floor": "2ος Όροφος",
+      "amenities": ["Κλιματισμός", "Γρήγορο WiFi"]
+    },
+    "secondFloorDeluxe": {
+      "title": "Second floor deluxe studio",
+      "floor": "2ος Όροφος",
+      "amenities": ["Μοντέρνο deluxe design", "Smart TV"]
+    },
+    "standardStudio": {
+      "title": "Standard studio",
+      "floor": "Ισόγειο",
+      "amenities": ["Άνετος χώρος studio"]
+    },
+    "secondFloor1": {
+      "title": "second floor number 1",
+      "floor": "2ος Όροφος",
+      "amenities": ["Άνετο studio με μπαλκόνι"]
+    },
+    "studioYard": {
+      "title": "Studio with yard",
+      "floor": "Ισόγειο",
+      "amenities": ["Πρόσβαση σε αυλή"]
+    },
     "minos1stFloor": {
-      "title": "Μίνωος: Two Bedroom Apartment",
+      "title": "Two Bedroom Apartment",
       "floor": "1ος Όροφος",
       "amenities": [
         "Μπαλκόνι με θέα στο δρόμο",
@@ -149,21 +184,21 @@
       ]
     },
     "minosWhite": {
-      "title": "Μίνωος: Standard Studio with Yard",
+      "title": "Studio with yard",
       "floor": "Ισόγειο",
       "amenities": [
         "Πρόσβαση σε αυλή"
       ]
     },
     "minosStandard": {
-      "title": "Μίνωος: Standard Studio",
+      "title": "Standard studio",
       "floor": "Ισόγειο",
       "amenities": [
         "Άνετος χώρος studio"
       ]
     },
     "minosDeluxe": {
-      "title": "Μίνωος: Deluxe Apartment",
+      "title": "Deluxe Studio with Queen size bed",
       "floor": "Ισόγειο",
       "amenities": [
         "Ιδιωτική αυλή",

@@ -140,8 +140,43 @@
     "guests": "guests"
   },
   "apartmentsData": {
+    "twoBedroom": {
+      "title": "Two Bedroom Apartment",
+      "floor": "1st Floor",
+      "amenities": ["Balcony with street view", "Washing machine included"]
+    },
+    "deluxeQueen": {
+      "title": "Deluxe Studio with Queen size bed",
+      "floor": "Ground Floor",
+      "amenities": ["Private yard", "Queen size bed"]
+    },
+    "secondFloor4": {
+      "title": "Second floor number 4",
+      "floor": "2nd Floor",
+      "amenities": ["Air conditioning", "High speed WiFi"]
+    },
+    "secondFloorDeluxe": {
+      "title": "Second floor deluxe studio",
+      "floor": "2nd Floor",
+      "amenities": ["Modern deluxe interior", "Smart TV"]
+    },
+    "standardStudio": {
+      "title": "Standard studio",
+      "floor": "Ground Floor",
+      "amenities": ["Comfortable standard studio setup"]
+    },
+    "secondFloor1": {
+      "title": "second floor number 1",
+      "floor": "2nd Floor",
+      "amenities": ["Comfortable studio with balcony"]
+    },
+    "studioYard": {
+      "title": "Studio with yard",
+      "floor": "Ground Floor",
+      "amenities": ["Private yard access"]
+    },
     "minos1stFloor": {
-      "title": "Minos Two Bedroom Apartment",
+      "title": "Two Bedroom Apartment",
       "floor": "1st Floor",
       "amenities": [
         "Balcony with street view",
@@ -149,21 +184,21 @@
       ]
     },
     "minosWhite": {
-      "title": "Minos Standard Studio with Yard",
+      "title": "Studio with yard",
       "floor": "Ground Floor",
       "amenities": [
         "Private yard access"
       ]
     },
     "minosStandard": {
-      "title": "Minos Standard Studio",
+      "title": "Standard studio",
       "floor": "Ground Floor",
       "amenities": [
         "Comfortable standard studio setup"
       ]
     },
     "minosDeluxe": {
-      "title": "Minos Deluxe Apartment",
+      "title": "Deluxe Studio with Queen size bed",
       "floor": "Ground Floor",
       "amenities": [
         "Private yard",

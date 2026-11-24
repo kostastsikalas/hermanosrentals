@@ -1,4 +1,5 @@
 import { getSupabaseAdmin, getVivaSettings, getVivaAccessToken, vivaUrls } from './_lib/viva.js';
+import { HOSTHUB_RENTALS, checkHosthubAvailability } from './_lib/hosthub.js';
 import { calculateDays, computePayment, PAYMENT_OPTION_LABELS } from '../src/lib/pricing.js';
 
 const PENDING_PAYMENT_TTL_MS = 30 * 60 * 1000; // unpaid bookings stop blocking dates after 30'
@@ -42,9 +43,17 @@ export default async function handler(req, res) {
     let apartment = null;
     let scooter = null;
     if (apartmentId) {
-      const { data, error } = await supabase.from('apartments').select('*').eq('id', apartmentId).maybeSingle();
-      if (error || !data) throw new Error(isGreek ? 'Το δωμάτιο δεν βρέθηκε.' : 'Apartment not found.');
-      apartment = data;
+      const { data } = await supabase.from('apartments').select('*').eq('id', apartmentId).maybeSingle();
+      if (data) {
+        apartment = data;
+      } else {
+        const hh = HOSTHUB_RENTALS.find((r) => r.id === apartmentId || r.hosthub_id === apartmentId);
+        if (hh) {
+          apartment = hh;
+        } else {
+          throw new Error(isGreek ? 'Το δωμάτιο δεν βρέθηκε.' : 'Apartment not found.');
+        }
+      }
     }
     if (scooterId) {
       const { data, error } = await supabase.from('scooters').select('*').eq('id', scooterId).maybeSingle();
@@ -55,7 +64,22 @@ export default async function handler(req, res) {
     const apartmentName = apartment ? (isGreek ? apartment.title_el : apartment.title_en) || apartment.title_en : null;
     const scooterName = scooter ? scooter.name : null;
 
-    // 2. Availability check (by id and, for older bookings, by name)
+    // 2. Real-time availability check via Hosthub API
+    const targetHosthubId = apartment?.hosthub_id ||
+      HOSTHUB_RENTALS.find((r) => r.id === apartment?.id || r.name.toLowerCase() === (apartment?.title_en || '').toLowerCase())?.hosthub_id;
+
+    if (targetHosthubId) {
+      const isFreeInHosthub = await checkHosthubAvailability(targetHosthubId, startDate, endDate);
+      if (!isFreeInHosthub) {
+        return res.status(409).json({
+          error: isGreek
+            ? 'Το επιλεγμένο κατάλυμα είναι ήδη κλεισμένο για αυτές τις ημερομηνίες (από Booking.com / Airbnb μέσω Hosthub).'
+            : 'Selected apartment is already booked for these dates (Hosthub / Booking.com sync).',
+        });
+      }
+    }
+
+    // 2b. Hermanos direct bookings availability check
     const { data: existing, error: exErr } = await supabase
       .from('bookings')
       .select('*')

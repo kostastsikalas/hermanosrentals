@@ -263,6 +263,71 @@ const AdminDashboard = () => {
         {/* Apartments View */}
         {activeTab === 'apartments' && (
           <div className="animate-in fade-in duration-300">
+            {/* Hosthub Live Sync Info Banner */}
+            <div className="mb-6 bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 pb-4 border-b border-slate-100">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold">
+                    HH
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 flex items-center gap-2">
+                      Hosthub Live Sync (7 Καταλύματα)
+                      <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 text-xs font-semibold px-2 py-0.5 rounded-full">
+                        <CheckCircle2 size={12} />
+                        Συνδεδεμένο API
+                      </span>
+                    </h3>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Οι τιμές και η διαθεσιμότητα συγχρονίζονται με το Hosthub (Booking.com / Airbnb)
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs text-left">
+                  <thead>
+                    <tr className="text-slate-500 border-b border-slate-100">
+                      <th className="py-2 pr-4 font-semibold">Κατάλυμα Hosthub</th>
+                      <th className="py-2 px-4 font-semibold">Τιμή / Βραδιά</th>
+                      <th className="py-2 px-4 font-semibold">Άτομα</th>
+                      <th className="py-2 px-4 font-semibold">Hosthub ID</th>
+                      <th className="py-2 pl-4 font-semibold text-right">iCal Link για Hosthub</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-50 text-slate-700">
+                    {[
+                      { name: 'Two Bedroom Apartment', price: '€98.00', guests: 6, hhId: '26h6xx3s78', link: `${typeof window !== 'undefined' ? window.location.origin : ''}/api/calendar?room=two-bedroom` },
+                      { name: 'Deluxe Studio with Queen size bed', price: '€65.00', guests: 2, hhId: 'havcyt1asp', link: `${typeof window !== 'undefined' ? window.location.origin : ''}/api/calendar?room=deluxe-queen` },
+                      { name: 'Second floor number 4', price: '€63.00', guests: 2, hhId: 'sfr8dwynnm', link: `${typeof window !== 'undefined' ? window.location.origin : ''}/api/calendar?room=second-floor-4` },
+                      { name: 'Second floor deluxe studio', price: '€60.00', guests: 2, hhId: '2m1upswrc1', link: `${typeof window !== 'undefined' ? window.location.origin : ''}/api/calendar?room=second-floor-deluxe` },
+                      { name: 'Standard studio', price: '€59.00', guests: 2, hhId: 's8t2qech6g', link: `${typeof window !== 'undefined' ? window.location.origin : ''}/api/calendar?room=standard-studio` },
+                      { name: 'second floor number 1', price: '€55.00', guests: 2, hhId: 'ed8ez4rnuh', link: `${typeof window !== 'undefined' ? window.location.origin : ''}/api/calendar?room=second-floor-1` },
+                      { name: 'Studio with yard', price: '€53.00', guests: 2, hhId: '6n5b3d8y2x', link: `${typeof window !== 'undefined' ? window.location.origin : ''}/api/calendar?room=studio-yard` },
+                    ].map((item) => (
+                      <tr key={item.hhId} className="hover:bg-slate-50/50">
+                        <td className="py-2.5 pr-4 font-medium text-slate-900">{item.name}</td>
+                        <td className="py-2.5 px-4 font-bold text-cyan-600">{item.price}</td>
+                        <td className="py-2.5 px-4">{item.guests}</td>
+                        <td className="py-2.5 px-4 font-mono text-slate-400">{item.hhId}</td>
+                        <td className="py-2.5 pl-4 text-right">
+                          <button
+                            type="button"
+                            onClick={() => navigator.clipboard?.writeText(item.link)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-slate-100 hover:bg-cyan-50 hover:text-cyan-600 font-medium transition-colors text-xs"
+                            title="Αντιγραφή iCal URL για να το επικολλήσετε στο Hosthub"
+                          >
+                            Αντιγραφή iCal
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
             <div className="flex justify-end mb-6">
               <button 
                 onClick={handleAddApartmentClick}
