@@ -1,6 +1,7 @@
 // Shared server-side helpers for Viva.com Smart Checkout.
 // Files in api/_lib are not exposed as routes by Vercel.
 import { createClient } from '@supabase/supabase-js';
+import { HOSTHUB_RENTALS, createHosthubBookingEvent } from './hosthub.js';
 
 export function getSupabaseAdmin() {
   const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
@@ -104,6 +105,30 @@ export async function confirmBookingFromTransaction(supabase, settings, transact
     };
     const { error: upErr } = await supabase.from('bookings').update(updates).eq('id', booking.id);
     if (upErr) throw upErr;
+
+    // Immediately sync with Hosthub to block the apartment on Booking.com / Airbnb!
+    if (booking.apartment_id && booking.dates?.from && booking.dates?.to) {
+      const rental = HOSTHUB_RENTALS.find(
+        (r) => r.id === booking.apartment_id || r.hosthub_id === booking.apartment_id
+      );
+      if (rental) {
+        try {
+          await createHosthubBookingEvent({
+            hosthubRentalId: rental.hosthub_id,
+            startDate: booking.dates.from,
+            endDate: booking.dates.to,
+            guestName: `${booking.customer?.firstName || ''} ${booking.customer?.lastName || ''}`.trim(),
+            guestEmail: booking.customer?.email,
+            guestPhone: booking.customer?.phone,
+            pax: booking.apartment_guests || 2,
+            bookingCode: booking.booking_code,
+          });
+        } catch (hhErr) {
+          console.error('Failed to notify Hosthub for booking:', booking.booking_code, hhErr);
+        }
+      }
+    }
+
     return { found: true, paid: true, bookingCode: booking.booking_code, ...updates };
   }
 

@@ -161,3 +161,58 @@ export async function checkHosthubAvailability(hosthubRentalId, startDate, endDa
     return true; // Fail open to not block booking if network glitch
   }
 }
+
+/**
+ * Creates a Booking calendar event in Hosthub when a booking is confirmed on our website.
+ * This immediately blocks the dates across Hosthub and all connected channels (Booking.com, Airbnb, etc.)!
+ */
+export async function createHosthubBookingEvent({
+  hosthubRentalId,
+  startDate,
+  endDate,
+  guestName,
+  guestEmail,
+  guestPhone,
+  pax = 2,
+  bookingCode = '',
+}) {
+  if (!hosthubRentalId || !startDate || !endDate) return null;
+
+  try {
+    const url = `${HOSTHUB_BASE_URL}/rentals/${encodeURIComponent(hosthubRentalId)}/calendar-events`;
+    const payload = {
+      type: 'Booking',
+      start_date: startDate.includes('T') ? startDate.split('T')[0] : startDate,
+      end_date: endDate.includes('T') ? endDate.split('T')[0] : endDate,
+      guest: {
+        name: guestName || 'Direct Website Guest',
+        email: guestEmail || '',
+        phone: guestPhone || '',
+      },
+      pax: Number(pax) || 2,
+      notes: `Direct Website Booking: ${bookingCode || ''}`.trim(),
+    };
+
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: HOSTHUB_API_KEY,
+        'Content-Type': 'application/json',
+        'User-Agent': 'HermanosRentals/1.0',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      console.warn('Hosthub create booking event failed:', res.status, data);
+      return { success: false, status: res.status, data };
+    }
+
+    console.log('Hosthub booking event created successfully:', data);
+    return { success: true, data };
+  } catch (err) {
+    console.error('Hosthub create booking error:', err);
+    return { success: false, error: err.message };
+  }
+}
