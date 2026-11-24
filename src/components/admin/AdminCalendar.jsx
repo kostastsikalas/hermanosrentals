@@ -53,7 +53,8 @@ const AdminCalendar = () => {
     status: res.status,
     customer: res.customer_details,
     raw_status: res.raw_status,
-    raw_notes: res.raw_notes
+    raw_notes: res.raw_notes,
+    payment: res.payment
   }));
 
   const eventStyleGetter = (event) => {
@@ -159,6 +160,30 @@ const AdminCalendar = () => {
                   <p className="text-sm font-semibold text-slate-900 mb-1">Customer Details:</p>
                   <p className="text-sm whitespace-pre-wrap">{selectedEvent.customer}</p>
                 </div>
+
+                {selectedEvent.payment && (
+                  <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 text-sm space-y-1">
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="font-semibold text-slate-900">Πληρωμή Viva</p>
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+                        selectedEvent.payment.status === 'paid' ? 'bg-green-100 text-green-700'
+                          : selectedEvent.payment.status === 'deposit_paid' ? 'bg-sky-100 text-sky-700'
+                          : selectedEvent.payment.status === 'failed' ? 'bg-red-100 text-red-700'
+                          : 'bg-amber-100 text-amber-700'
+                      }`}>
+                        {{ paid: 'Εξοφλημένη', deposit_paid: 'Προκαταβολή', failed: 'Απέτυχε', pending: 'Αναμονή πληρωμής', refunded: 'Επιστράφηκε' }[selectedEvent.payment.status] || selectedEvent.payment.status}
+                      </span>
+                    </div>
+                    <p>Επιλογή: {selectedEvent.payment.label}</p>
+                    <p>Σύνολο: €{selectedEvent.payment.total.toFixed(2)}{selectedEvent.payment.discount > 0 ? ` (έκπτωση €${selectedEvent.payment.discount.toFixed(2)})` : ''}</p>
+                    <p>Πληρώθηκε: €{selectedEvent.payment.paid.toFixed(2)}</p>
+                    <p className="font-semibold">Υπόλοιπο: €{Math.max(0, selectedEvent.payment.total - selectedEvent.payment.paid).toFixed(2)}</p>
+                    <p>Ακύρωση: {selectedEvent.payment.refundable === false ? 'Μη επιστρέψιμη' : 'Επιστρέψιμη'}</p>
+                    {selectedEvent.payment.transactionId && (
+                      <p className="text-xs text-slate-400 break-all">Transaction: {selectedEvent.payment.transactionId}</p>
+                    )}
+                  </div>
+                )}
                 
                 <div className="mt-6 flex gap-3 pt-4 border-t border-slate-100">
                   <button 

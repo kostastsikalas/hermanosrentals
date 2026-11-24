@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { User, Mail, Phone, Calendar, MessageSquare, Car, CheckCircle, Loader2, Home as HomeIcon, AlertCircle, Check } from 'lucide-react';
-import emailjs from '@emailjs/browser';
 import { supabase } from '../lib/supabase';
 import { useScooters } from '../hooks/useScooters';
 import { useApartments } from '../hooks/useApartments';
+import { calculateDays, computePayment, getAvailableOptions, PAYMENT_OPTION_LABELS } from '../lib/pricing';
 
 const BookingPage = () => {
   const { t, i18n } = useTranslation();
@@ -32,6 +32,8 @@ const BookingPage = () => {
 
   const [selectedScooter, setSelectedScooter] = useState(null);
   const [selectedApartment, setSelectedApartment] = useState(null);
+  const [paymentOption, setPaymentOption] = useState(null);
+  const [submitError, setSubmitError] = useState('');
 
   useEffect(() => {
     // Scroll to top on mount
@@ -73,7 +75,7 @@ const BookingPage = () => {
           const { data, error } = await supabase
             .from('bookings')
             .select('start_date, end_date, status')
-            .eq('vehicle_name', vName)
+            .ilike('vehicle_name', `%${vName}%`)
             .neq('status', 'cancelled');
 
           if (error) continue;
@@ -105,101 +107,114 @@ const BookingPage = () => {
     checkAvailability();
   }, [formData.startDate, formData.endDate, selectedScooter, selectedApartment, isGreek]);
 
-  const calculateDays = () => {
-    if (!formData.startDate || !formData.endDate) return 0;
-    const start = new Date(formData.startDate);
-    const end = new Date(formData.endDate);
-    if (end < start) return 0;
-    const diffTime = Math.abs(end - start);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays > 0 ? diffDays : 1;
-  };
+  const days = calculateDays(formData.startDate, formData.endDate);
+  const selection = { hasApartment: Boolean(selectedApartment), hasScooter: Boolean(selectedScooter) };
+  const availableOptions = getAvailableOptions(selection);
 
-  const days = calculateDays();
-  const scooterPrice = selectedScooter ? parseFloat(selectedScooter.price || 0) : 0;
-  const apartmentPrice = selectedApartment ? parseFloat(selectedApartment.price || 0) : 0;
-  const totalPrice = days * (scooterPrice + apartmentPrice);
-
-  const getCombinedName = () => {
-    const names = [];
-    if (selectedApartment) {
-      names.push(isGreek ? selectedApartment.title_el : selectedApartment.title_en);
+  // Keep the chosen payment option valid when the selection changes
+  useEffect(() => {
+    if (!availableOptions.includes(paymentOption)) {
+      setPaymentOption(availableOptions[0] || null);
     }
-    if (selectedScooter) {
-      names.push(selectedScooter.name);
-    }
-    return names.join(' & ');
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selection.hasApartment, selection.hasScooter]);
 
-  const generateBookingCode = () => {
-    return 'HRM-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+  const payment = computePayment({
+    apartmentPrice: selectedApartment?.price,
+    scooterPrice: selectedScooter?.price,
+    days,
+    ...selection,
+    option: paymentOption,
+  });
+  const totalPrice = payment.total;
+
+  const optionDescriptions = {
+    scooter_deposit: isGreek
+      ? 'Πληρώνετε τώρα το 30% της μηχανής και το υπόλοιπο κατά την παραλαβή.'
+      : 'Pay 30% of the scooter now and the rest at pickup.',
+    full: isGreek ? 'Πληρώνετε ολόκληρο το ποσό τώρα.' : 'Pay the full amount now.',
+    combo_deposit: isGreek
+      ? 'Ολόκληρο το ποσό του δωματίου + 30% της μηχανής τώρα. Το υπόλοιπο της μηχανής κατά την παραλαβή.'
+      : 'Full room price + 30% of the scooter now. Scooter balance at pickup.',
+    full_refundable: isGreek
+      ? 'Ολόκληρο το ποσό τώρα. Επιστροφή χρημάτων σε περίπτωση ακύρωσης σύμφωνα με τους όρους.'
+      : 'Full amount now. Refund on cancellation according to our terms.',
+    full_nonrefundable: isGreek
+      ? 'Ολόκληρο το ποσό τώρα με έκπτωση 10%. Δεν επιστρέφονται χρήματα σε περίπτωση ακύρωσης.'
+      : 'Full amount now with 10% off. No refund on cancellation.',
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitError('');
     if (!selectedScooter && !selectedApartment) {
-      alert(t('bookingPage.selectWarning', 'Please select at least one scooter or apartment to book.'));
+      setSubmitError(t('bookingPage.selectWarning', 'Please select at least one scooter or apartment to book.'));
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     try {
-      const combinedName = getCombinedName();
-      const bookingCode = generateBookingCode();
-      
-      const { error } = await supabase
-        .from('bookings')
-        .insert([{
-          first_name: formData.firstName,
-          last_name: formData.lastName,
+      const response = await fetch('/api/viva-create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstName: formData.firstName,
+          lastName: formData.lastName,
           email: formData.email,
           phone: formData.phone,
-          start_date: formData.startDate,
-          end_date: formData.endDate,
-          vehicle_name: combinedName,
+          startDate: formData.startDate,
+          endDate: formData.endDate,
           notes: formData.notes,
-          booking_code: bookingCode
-        }]);
+          apartmentId: selectedApartment?.id ?? null,
+          scooterId: selectedScooter?.id ?? null,
+          paymentOption: payment.option,
+          lang: i18n.language,
+        }),
+      });
 
-      if (error) throw error;
-      
-      // Send Emails via EmailJS
-      try {
-        const templateParams = {
-          booking_code: bookingCode,
-          first_name: formData.firstName,
-          last_name: formData.lastName,
-          email: formData.email,
-          phone: formData.phone,
-          start_date: formData.startDate,
-          end_date: formData.endDate,
-          vehicle_name: combinedName,
-          total_price: totalPrice,
-          notes: formData.notes || '-'
-        };
+      const contentType = response.headers.get('content-type') || '';
+      const data = contentType.includes('application/json') ? await response.json() : null;
 
-        // TODO: Replace with actual template keys from EmailJS when provided
-        const SERVICE_ID = 'service_xz68nzs';
-        const PUBLIC_KEY = 'K4QWJAJ8b3K8ryYSR';
-        const CUSTOMER_TEMPLATE = 'template_2gz1wsq';
-        const ADMIN_TEMPLATE = 'template_jaryxat';
-
-        if (CUSTOMER_TEMPLATE !== 'YOUR_CUSTOMER_TEMPLATE_ID') {
-          // Send to Customer
-          await emailjs.send(SERVICE_ID, CUSTOMER_TEMPLATE, templateParams, PUBLIC_KEY);
-          // Send to Admin
-          await emailjs.send(SERVICE_ID, ADMIN_TEMPLATE, templateParams, PUBLIC_KEY);
-        }
-      } catch (emailError) {
-        console.error('Failed to send email:', emailError);
+      if (!response.ok || !data?.checkoutUrl) {
+        throw new Error(
+          data?.error ||
+            (isGreek
+              ? 'Η πληρωμή δεν είναι διαθέσιμη αυτή τη στιγμή. Δοκιμάστε ξανά ή επικοινωνήστε μαζί μας.'
+              : 'Online payment is not available right now. Please try again or contact us.')
+        );
       }
 
-      setIsSuccess(true);
+      // Saved so the success page can send the confirmation emails after payment
+      const p = data.payment || payment;
+      const optionLabel = PAYMENT_OPTION_LABELS[p.option]?.[isGreek ? 'el' : 'en'] || p.option;
+      sessionStorage.setItem(
+        'hermanos_pending_booking',
+        JSON.stringify({
+          orderCode: data.orderCode,
+          templateParams: {
+            booking_code: data.bookingCode,
+            first_name: formData.firstName,
+            last_name: formData.lastName,
+            email: formData.email,
+            phone: formData.phone,
+            start_date: formData.startDate,
+            end_date: formData.endDate,
+            vehicle_name: data.vehicleName,
+            total_price: Number(p.total).toFixed(2),
+            amount_paid: Number(p.dueNow).toFixed(2),
+            amount_remaining: Number(p.remaining).toFixed(2),
+            payment_option: optionLabel,
+            refundable: p.refundable ? (isGreek ? 'Ναι' : 'Yes') : (isGreek ? 'Όχι' : 'No'),
+            notes: `${formData.notes || '-'} | ${optionLabel} | ${isGreek ? 'Πληρώθηκε' : 'Paid'}: €${Number(p.dueNow).toFixed(2)} | ${isGreek ? 'Υπόλοιπο' : 'Balance'}: €${Number(p.remaining).toFixed(2)}`,
+          },
+        })
+      );
+
+      window.location.href = data.checkoutUrl;
     } catch (error) {
       console.error('Error submitting booking:', error);
-      alert('Σφάλμα: ' + (error.message || JSON.stringify(error)));
-    } finally {
+      setSubmitError(error.message || String(error));
       setIsSubmitting(false);
     }
   };
@@ -427,7 +442,64 @@ const BookingPage = () => {
               </div>
             )}
 
-            {/* 3. Notes & Total */}
+            {/* Payment Option */}
+            {availableOptions.length > 0 && (
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">
+                  3. {isGreek ? 'Τρόπος Πληρωμής' : 'Payment Option'}
+                </h3>
+                <div className="grid grid-cols-1 gap-3" role="radiogroup">
+                  {availableOptions.map((opt) => {
+                    const optPay = computePayment({
+                      apartmentPrice: selectedApartment?.price,
+                      scooterPrice: selectedScooter?.price,
+                      days,
+                      ...selection,
+                      option: opt,
+                    });
+                    const checked = payment.option === opt;
+                    return (
+                      <label
+                        key={opt}
+                        className={`flex items-start gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all ${
+                          checked ? 'border-cyan-500 bg-cyan-50/40 ring-4 ring-cyan-500/10' : 'border-slate-200 hover:border-cyan-300'
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="paymentOption"
+                          value={opt}
+                          checked={checked}
+                          onChange={() => setPaymentOption(opt)}
+                          className="mt-1 accent-sky-500"
+                        />
+                        <div className="flex-1">
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <span className="font-semibold text-slate-900">
+                              {PAYMENT_OPTION_LABELS[opt][isGreek ? 'el' : 'en']}
+                            </span>
+                            {days > 0 && (
+                              <span className="font-bold text-slate-900">
+                                €{optPay.dueNow.toFixed(2)}
+                                <span className="text-xs font-normal text-slate-500"> {isGreek ? 'τώρα' : 'now'}</span>
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-sm text-slate-500 mt-1">{optionDescriptions[opt]}</p>
+                          {opt === 'full_nonrefundable' && days > 0 && (
+                            <p className="text-xs font-semibold text-green-700 mt-1">
+                              {isGreek ? 'Κερδίζετε' : 'You save'} €{optPay.discount.toFixed(2)}
+                            </p>
+                          )}
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* 4. Notes & Total */}
             <div className="space-y-6 border-t pt-8">
               <div className="relative group">
                 <div className="absolute top-4 left-4 flex items-start pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
@@ -442,16 +514,31 @@ const BookingPage = () => {
                 ></textarea>
               </div>
 
+              {submitError && (
+                <div className="p-4 bg-red-50 text-red-600 rounded-xl flex items-start gap-3 border border-red-100">
+                  <AlertCircle size={20} className="shrink-0 mt-0.5" />
+                  <p className="text-sm font-medium">{submitError}</p>
+                </div>
+              )}
+
               {/* Price Summary */}
               <div className="bg-slate-900 text-white p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6">
-                <div>
-                  <p className="text-slate-400 text-sm font-medium mb-1">{t('bookingPage.totalLabel', 'Estimated Total')}</p>
+                <div className="w-full md:w-auto">
+                  <p className="text-slate-400 text-sm font-medium mb-1">{isGreek ? 'Πληρωμή τώρα' : 'Pay now'}</p>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-bold text-cyan-400">€{totalPrice.toFixed(2)}</span>
+                    <span className="text-4xl font-bold text-cyan-400">€{payment.dueNow.toFixed(2)}</span>
                     <span className="text-slate-400 text-sm">
                       {days > 0 ? `(${days} ${t('bookingPage.days', 'days')})` : ''}
                     </span>
                   </div>
+                  {days > 0 && (selectedScooter || selectedApartment) && (
+                    <div className="mt-2 text-sm text-slate-400 space-y-0.5">
+                      <p>{isGreek ? 'Σύνολο κράτησης' : 'Booking total'}: €{totalPrice.toFixed(2)}{payment.discount > 0 ? ` (-€${payment.discount.toFixed(2)})` : ''}</p>
+                      {payment.remaining > 0 && (
+                        <p>{isGreek ? 'Υπόλοιπο κατά την παραλαβή' : 'Balance at pickup'}: €{payment.remaining.toFixed(2)}</p>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <button 
@@ -459,7 +546,7 @@ const BookingPage = () => {
                   disabled={isSubmitting || checkingAvailability || !isAvailable || (!selectedScooter && !selectedApartment)}
                   className="w-full md:w-auto bg-cyan-500 hover:bg-cyan-400 disabled:bg-slate-700 disabled:text-slate-400 disabled:cursor-not-allowed text-slate-900 font-bold py-4 px-8 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg"
                 >
-                  {(isSubmitting || checkingAvailability) ? <Loader2 className="animate-spin" size={20} /> : t('bookingPage.submitBtn')}
+                  {(isSubmitting || checkingAvailability) ? <Loader2 className="animate-spin" size={20} /> : (isGreek ? 'Συνέχεια στην πληρωμή' : 'Continue to payment')}
                 </button>
               </div>
             </div>
