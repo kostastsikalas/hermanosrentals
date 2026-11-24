@@ -32,6 +32,7 @@ const RedirectUrlsBox = () => {
     { label: 'Domain', value: host },
     { label: 'Success URL', value: '/payment/success', full: `${origin}/payment/success` },
     { label: 'Failure URL', value: '/payment/failure', full: `${origin}/payment/failure` },
+    { label: 'Webhook URL', value: `${origin}/api/viva-webhook`, full: `${origin}/api/viva-webhook` },
   ];
   return (
     <div className="p-4 sm:p-5 rounded-2xl bg-sky-50 border border-sky-200 text-sm">
