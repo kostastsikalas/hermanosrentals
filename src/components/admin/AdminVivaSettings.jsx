@@ -47,13 +47,26 @@ const RedirectUrlsBox = () => {
             <code className="flex-1 bg-white border border-sky-100 rounded-lg px-3 py-1.5 font-mono text-slate-900 break-all">
               {r.value}
             </code>
-            <button
-              type="button"
-              onClick={() => navigator.clipboard?.writeText(r.value)}
-              className="text-xs font-medium text-sky-700 hover:text-sky-900 px-2 py-1"
-            >
-              Αντιγραφή
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => navigator.clipboard?.writeText(r.value)}
+                className="text-xs font-medium text-sky-700 hover:text-sky-900 px-2 py-1 rounded hover:bg-sky-100 transition-colors"
+              >
+                Αντιγραφή
+              </button>
+              {r.label === 'Webhook URL' && (
+                <a
+                  href={r.value}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs font-medium text-cyan-600 hover:text-cyan-800 px-2 py-1 rounded hover:bg-cyan-50 transition-colors"
+                  title="Ανοίγει το Webhook URL στον browser για να επιβεβαιώσετε ότι επιστρέφει το Key"
+                >
+                  Έλεγχος ↗
+                </a>
+              )}
+            </div>
           </div>
         ))}
       </div>
@@ -92,9 +105,49 @@ const AdminVivaSettings = ({ viva }) => {
     webhook_key: false,
   });
 
-  const [formError, setFormError] = useState('');
-  const [statusMessage, setStatusMessage] = useState(null); // { type: 'success' | 'error' | 'info', text: string }
-  const [isTesting, setIsTesting] = useState(false);
+  const [isFetchingToken, setIsFetchingToken] = useState(false);
+
+  const handleFetchWebhookToken = async () => {
+    setIsFetchingToken(true);
+    setStatusMessage(null);
+    try {
+      const response = await fetch('/api/viva-get-webhook-token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          merchant_id: isEditing ? formData.merchant_id : settings.merchant_id,
+          api_key: isEditing ? formData.api_key : settings.api_key,
+          environment: isEditing ? formData.environment : settings.environment,
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok && data.success && data.key) {
+        if (isEditing) {
+          setFormData((prev) => ({ ...prev, webhook_key: data.key }));
+        }
+        if (viva.refreshSettings) {
+          await viva.refreshSettings();
+        }
+        setStatusMessage({
+          type: 'success',
+          text: `Το Webhook Verification Key ανακτήθηκε αυτόματα: ${data.key} και αποθηκεύτηκε! Τώρα μπορείτε να πατήσετε "Verify" στο Viva Dashboard.`,
+        });
+      } else {
+        setStatusMessage({
+          type: 'error',
+          text: data.error || 'Αποτυχία ανάκτησης Webhook Key από τη Viva.',
+        });
+      }
+    } catch (err) {
+      setStatusMessage({
+        type: 'error',
+        text: 'Σφάλμα επικοινωνίας: ' + err.message,
+      });
+    } finally {
+      setIsFetchingToken(false);
+    }
+  };
 
   useEffect(() => {
     setFormData({
@@ -267,6 +320,20 @@ const AdminVivaSettings = ({ viva }) => {
                   <RefreshCw size={16} />
                 )}
                 Δοκιμή Σύνδεσης
+              </button>
+              <button
+                type="button"
+                onClick={handleFetchWebhookToken}
+                disabled={isFetchingToken}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium bg-white hover:bg-sky-50 text-sky-800 border border-sky-200 transition-colors disabled:opacity-60"
+                title="Ανακτά το μοναδικό Webhook Key από τη Viva ώστε να περάσει το Verify"
+              >
+                {isFetchingToken ? (
+                  <Loader2 size={16} className="animate-spin" />
+                ) : (
+                  <Webhook size={16} />
+                )}
+                Ανάκτηση Webhook Key
               </button>
               <button
                 type="button"
@@ -635,9 +702,20 @@ const AdminVivaSettings = ({ viva }) => {
               </div>
 
               <div>
-                <label htmlFor="viva-webhook-key" className="block text-sm font-medium text-slate-700 mb-1.5">
-                  Webhook Verification Key (Προαιρετικό)
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label htmlFor="viva-webhook-key" className="block text-sm font-medium text-slate-700">
+                    Webhook Verification Key
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handleFetchWebhookToken}
+                    disabled={isFetchingToken}
+                    className="text-xs font-semibold text-cyan-600 hover:text-cyan-700 flex items-center gap-1 disabled:opacity-50"
+                  >
+                    {isFetchingToken ? <Loader2 size={12} className="animate-spin" /> : <RefreshCw size={12} />}
+                    Αυτόματη Λήψη
+                  </button>
+                </div>
                 <div className="relative">
                   <Webhook size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
                   <input
