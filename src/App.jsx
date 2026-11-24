@@ -9,6 +9,8 @@ import AdminDashboard from './pages/AdminScooters';
 import TermsPage from './pages/TermsPage';
 import BookingPage from './pages/BookingPage';
 import NotFoundPage from './pages/NotFoundPage';
+import PaymentSuccessPage from './pages/PaymentSuccessPage';
+import PaymentFailurePage from './pages/PaymentFailurePage';
 
 function App() {
   return (
@@ -23,6 +25,8 @@ function App() {
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/book" element={<BookingPage />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/payment/success" element={<PaymentSuccessPage />} />
+            <Route path="/payment/failure" element={<PaymentFailurePage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>

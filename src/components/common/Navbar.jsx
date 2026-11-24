@@ -45,7 +45,7 @@ const Navbar = () => {
     );
   }
 
-  const isLightBgPage = ['/book', '/terms'].includes(location.pathname);
+  const isLightBgPage = ['/book', '/terms', '/payment/success', '/payment/failure'].includes(location.pathname);
   const navBgClass = scrolled || isLightBgPage 
     ? 'bg-slate-950/95 backdrop-blur-md shadow-lg py-3' 
     : 'bg-transparent py-5';

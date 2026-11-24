@@ -25,6 +25,44 @@ function maskSecret(value, visibleChars = 4) {
   return `${value.slice(0, visibleChars)}••••••••${value.slice(-visibleChars)}`;
 }
 
+const RedirectUrlsBox = () => {
+  const origin = typeof window !== 'undefined' ? window.location.origin : '';
+  const host = typeof window !== 'undefined' ? window.location.host : '';
+  const rows = [
+    { label: 'Domain', value: host },
+    { label: 'Success URL', value: '/payment/success', full: `${origin}/payment/success` },
+    { label: 'Failure URL', value: '/payment/failure', full: `${origin}/payment/failure` },
+  ];
+  return (
+    <div className="p-4 sm:p-5 rounded-2xl bg-sky-50 border border-sky-200 text-sm">
+      <p className="font-semibold text-slate-900 mb-1">URLs για το Viva Dashboard</p>
+      <p className="text-slate-600 mb-3">
+        Βάλτε τα στο Viva: Πωλήσεις → Online Πληρωμές → Ιστοσελίδες/Εφαρμογές → (η πηγή σας).
+      </p>
+      <div className="space-y-2">
+        {rows.map((r) => (
+          <div key={r.label} className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+            <span className="w-28 shrink-0 text-xs font-medium text-slate-500">{r.label}</span>
+            <code className="flex-1 bg-white border border-sky-100 rounded-lg px-3 py-1.5 font-mono text-slate-900 break-all">
+              {r.value}
+            </code>
+            <button
+              type="button"
+              onClick={() => navigator.clipboard?.writeText(r.value)}
+              className="text-xs font-medium text-sky-700 hover:text-sky-900 px-2 py-1"
+            >
+              Αντιγραφή
+            </button>
+          </div>
+        ))}
+      </div>
+      <p className="text-xs text-slate-500 mt-3">
+        Πλήρεις διευθύνσεις: {rows[1].full} · {rows[2].full}
+      </p>
+    </div>
+  );
+};
+
 const AdminVivaSettings = ({ viva }) => {
   const {
     settings,
@@ -314,6 +352,10 @@ const AdminVivaSettings = ({ viva }) => {
               </div>
             </div>
 
+            <div className="mt-6">
+              <RedirectUrlsBox />
+            </div>
+
             {storageMode === 'local' && (
               <div className="mt-6 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-sm flex items-start gap-3">
                 <Info size={18} className="shrink-0 mt-0.5 text-amber-600" />
@@ -392,6 +434,8 @@ const AdminVivaSettings = ({ viva }) => {
               </li>
             </ul>
           </div>
+
+          <RedirectUrlsBox />
 
           {formError && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl flex items-start gap-3 text-sm">
