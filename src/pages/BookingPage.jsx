@@ -390,8 +390,23 @@ const BookingPage = () => {
                     <input 
                       type="date" 
                       required
+                      min={new Date().toISOString().split('T')[0]}
                       value={formData.startDate}
-                      onChange={(e) => setFormData({...formData, startDate: e.target.value})}
+                      onChange={(e) => {
+                        const newStart = e.target.value;
+                        setFormData((prev) => {
+                          // If end date is empty or before the new start date, update end date to start date + 1 day
+                          let nextEnd = prev.endDate;
+                          if (!nextEnd || nextEnd <= newStart) {
+                            if (newStart) {
+                              const d = new Date(newStart);
+                              d.setDate(d.getDate() + 1);
+                              nextEnd = d.toISOString().split('T')[0];
+                            }
+                          }
+                          return { ...prev, startDate: newStart, endDate: nextEnd };
+                        });
+                      }}
                       className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300"
                       title={t('bookingPage.startDate')}
                     />
@@ -409,6 +424,7 @@ const BookingPage = () => {
                     <input 
                       type="date" 
                       required
+                      min={formData.startDate || new Date().toISOString().split('T')[0]}
                       value={formData.endDate}
                       onChange={(e) => setFormData({...formData, endDate: e.target.value})}
                       className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300"
