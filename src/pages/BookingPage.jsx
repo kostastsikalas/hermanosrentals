@@ -464,7 +464,16 @@ const BookingPage = () => {
                         </div>
                         <div className="p-3 bg-white">
                           <p className="font-semibold text-slate-900 text-sm truncate">{title}</p>
-                          <p className="text-cyan-600 font-bold text-sm">€{price}<span className="text-xs text-slate-500 font-normal"> / {t('bookingPage.day', 'day')}</span></p>
+                          {days > 0 ? (
+                            <p className="text-cyan-600 font-bold text-sm">
+                              €{(parseFloat(apt.price || 0) * days).toFixed(2)}
+                              <span className="text-xs text-slate-500 font-normal"> ({days} {t('bookingPage.days', 'days')})</span>
+                            </p>
+                          ) : (
+                            <p className="text-xs text-slate-400 mt-1 italic">
+                              {isGreek ? 'Επιλέξτε ημερομηνίες' : 'Select dates to view price'}
+                            </p>
+                          )}
                         </div>
                         {isSelected && (
                           <div className="absolute top-2 right-2 bg-cyan-500 text-white rounded-full p-1 shadow-sm">
@@ -500,7 +509,16 @@ const BookingPage = () => {
                         </div>
                         <div className="p-3 bg-white border-t border-slate-50">
                           <p className="font-semibold text-slate-900 text-sm truncate">{scooter.name}</p>
-                          <p className="text-cyan-600 font-bold text-sm">€{price}<span className="text-xs text-slate-500 font-normal"> / {t('bookingPage.day', 'day')}</span></p>
+                          {days > 0 ? (
+                            <p className="text-cyan-600 font-bold text-sm">
+                              €{(parseFloat(scooter.price || 0) * days).toFixed(2)}
+                              <span className="text-xs text-slate-500 font-normal"> ({days} {t('bookingPage.days', 'days')})</span>
+                            </p>
+                          ) : (
+                            <p className="text-xs text-slate-400 mt-1 italic">
+                              {isGreek ? 'Επιλέξτε ημερομηνίες' : 'Select dates to view price'}
+                            </p>
+                          )}
                         </div>
                         {isSelected && (
                           <div className="absolute top-2 right-2 bg-cyan-500 text-white rounded-full p-1 shadow-sm">
