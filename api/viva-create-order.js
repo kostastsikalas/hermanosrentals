@@ -21,7 +21,7 @@ export default async function handler(req, res) {
 
   const body = req.body || {};
   const {
-    firstName, lastName, email, phone, startDate, endDate, notes,
+    firstName, lastName, birthDate, email, phone, startDate, endDate, notes,
     apartmentId, scooterId, paymentOption, lang,
   } = body;
   const isGreek = (lang || '').startsWith('el');
@@ -139,17 +139,23 @@ export default async function handler(req, res) {
     const vehicleName = [apartmentName, scooterName].filter(Boolean).join(' & ');
     const optionLabel = PAYMENT_OPTION_LABELS[pay.option]?.[isGreek ? 'el' : 'en'] || pay.option;
 
+    const combinedNotes = [
+      birthDate ? `Birth Date: ${birthDate}` : null,
+      notes || null,
+    ].filter(Boolean).join(' | ');
+
     const { data: inserted, error: insErr } = await supabase
       .from('bookings')
       .insert([{
         first_name: firstName,
         last_name: lastName,
+        birth_date: birthDate || null,
         email,
         phone,
         start_date: startDate,
         end_date: endDate,
         vehicle_name: vehicleName,
-        notes: notes || '',
+        notes: combinedNotes,
         booking_code: bookingCode,
         status: 'pending',
         apartment_id: apartment ? apartment.id : null,

@@ -2,6 +2,7 @@
 -- Run this once in Supabase → SQL Editor.
 
 ALTER TABLE public.bookings ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+ALTER TABLE public.bookings ADD COLUMN IF NOT EXISTS birth_date DATE;
 ALTER TABLE public.bookings ADD COLUMN IF NOT EXISTS apartment_id TEXT;
 ALTER TABLE public.bookings ADD COLUMN IF NOT EXISTS scooter_id TEXT;
 ALTER TABLE public.bookings ADD COLUMN IF NOT EXISTS payment_option TEXT;

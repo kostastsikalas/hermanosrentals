@@ -23,6 +23,7 @@ const BookingPage = () => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
+    birthDate: '',
     email: '',
     phone: '',
     startDate: '',
@@ -178,6 +179,7 @@ const BookingPage = () => {
         body: JSON.stringify({
           firstName: formData.firstName,
           lastName: formData.lastName,
+          birthDate: formData.birthDate,
           email: formData.email,
           phone: formData.phone,
           startDate: formData.startDate,
@@ -213,6 +215,7 @@ const BookingPage = () => {
             booking_code: data.bookingCode,
             first_name: formData.firstName,
             last_name: formData.lastName,
+            birth_date: formData.birthDate || '-',
             email: formData.email,
             phone: formData.phone,
             start_date: formData.startDate,
@@ -311,70 +314,114 @@ const BookingPage = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="relative group">
-                  <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
-                    <Mail size={18} />
+                  <label className="block text-xs font-semibold text-slate-600 mb-1.5 ml-1">
+                    {t('bookingPage.birthDate', 'Date of Birth')}
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
+                      <Calendar size={18} />
+                    </div>
+                    <input 
+                      type="date" 
+                      required
+                      value={formData.birthDate}
+                      onChange={(e) => setFormData({...formData, birthDate: e.target.value})}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300"
+                      title={t('bookingPage.birthDate', 'Date of Birth')}
+                    />
                   </div>
-                  <input 
-                    type="email" 
-                    required
-                    value={formData.email}
-                    onChange={(e) => setFormData({...formData, email: e.target.value})}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300"
-                    placeholder={t('bookingPage.email')}
-                  />
                 </div>
 
                 <div className="relative group">
-                  <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
-                    <Phone size={18} />
+                  <label className="block text-xs font-semibold text-slate-600 mb-1.5 ml-1">
+                    {t('bookingPage.email', 'Email Address')}
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
+                      <Mail size={18} />
+                    </div>
+                    <input 
+                      type="email" 
+                      required
+                      value={formData.email}
+                      onChange={(e) => setFormData({...formData, email: e.target.value})}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300"
+                      placeholder={t('bookingPage.email')}
+                    />
                   </div>
-                  <input 
-                    type="tel" 
-                    required
-                    value={formData.phone}
-                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300"
-                    placeholder={t('bookingPage.phone')}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="relative group">
-                  <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
-                    <Calendar size={18} />
-                  </div>
-                  <input 
-                    type="date" 
-                    required
-                    value={formData.startDate}
-                    onChange={(e) => setFormData({...formData, startDate: e.target.value})}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300"
-                    title={t('bookingPage.startDate')}
-                  />
                 </div>
 
                 <div className="relative group">
-                  <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
-                    <Calendar size={18} />
+                  <label className="block text-xs font-semibold text-slate-600 mb-1.5 ml-1">
+                    {t('bookingPage.phone', 'Phone Number')}
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
+                      <Phone size={18} />
+                    </div>
+                    <input 
+                      type="tel" 
+                      required
+                      value={formData.phone}
+                      onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300"
+                      placeholder={t('bookingPage.phone')}
+                    />
                   </div>
-                  <input 
-                    type="date" 
-                    required
-                    value={formData.endDate}
-                    onChange={(e) => setFormData({...formData, endDate: e.target.value})}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300"
-                    title={t('bookingPage.endDate')}
-                  />
                 </div>
               </div>
             </div>
 
-            {/* 2. Visual Selection */}
+            {/* 2. Book Dates */}
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">2. {t('bookingPage.chooseOptions', 'Choose Accommodation & Vehicles')}</h3>
+              <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">2. {t('bookingPage.bookDates', 'Book Dates')}</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="relative group">
+                  <label className="block text-xs font-semibold text-slate-600 mb-1.5 ml-1">
+                    {t('bookingPage.startDate', 'Start Date')}
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
+                      <Calendar size={18} />
+                    </div>
+                    <input 
+                      type="date" 
+                      required
+                      value={formData.startDate}
+                      onChange={(e) => setFormData({...formData, startDate: e.target.value})}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300"
+                      title={t('bookingPage.startDate')}
+                    />
+                  </div>
+                </div>
+
+                <div className="relative group">
+                  <label className="block text-xs font-semibold text-slate-600 mb-1.5 ml-1">
+                    {t('bookingPage.endDate', 'End Date')}
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-sky-500 transition-colors">
+                      <Calendar size={18} />
+                    </div>
+                    <input 
+                      type="date" 
+                      required
+                      value={formData.endDate}
+                      onChange={(e) => setFormData({...formData, endDate: e.target.value})}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 focus:bg-white transition-all duration-300"
+                      title={t('bookingPage.endDate')}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 3. Choose Accommodation & Vehicles */}
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">3. {t('bookingPage.chooseOptions', 'Choose Accommodation & Vehicles')}</h3>
               <p className="text-sm text-slate-500">{t('bookingPage.selectHelp', 'You can select an apartment, a scooter, or both!')}</p>
 
               {/* Apartments */}
@@ -463,7 +510,7 @@ const BookingPage = () => {
             {availableOptions.length > 0 && (
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">
-                  3. {isGreek ? 'Τρόπος Πληρωμής' : 'Payment Option'}
+                  4. {isGreek ? 'Τρόπος Πληρωμής' : 'Payment Option'}
                 </h3>
                 <div className="grid grid-cols-1 gap-3" role="radiogroup">
                   {availableOptions.map((opt) => {
